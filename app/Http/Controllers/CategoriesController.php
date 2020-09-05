@@ -16,9 +16,10 @@ class CategoriesController extends Controller
     public function index()
     {
         $categories = Category::all();
-        $data['categories_tree'] = $this->buildTreeHTML($categories->toArray());
+        $data['categories_tree'] = Category::BuildTreeHTML($categories->toArray());
         $data['categories'] = $categories;
 
+        #return response()->json($data);
         return view('admin.contents.categories', $data);
     }
 
@@ -41,6 +42,7 @@ class CategoriesController extends Controller
     public function store(Request $request)
     {
         $category = new Category;
+        $category->user_id = Auth()->user()->id;
         $category->name = $request->name;
         $category->slug = $request->slug;
         $category->parent = $request->parent;
@@ -48,7 +50,7 @@ class CategoriesController extends Controller
 
         if($category){
             $categories = Category::all();
-            $html_build_tree = $this->buildTreeHTML($categories->toArray());
+            $html_build_tree = Category::BuildTreeHTML($categories->toArray());
             return response()->json(array('success' => true, 'msg' => 'Category added successfully.', 'html_build' => $html_build_tree));
         }
     }
@@ -82,9 +84,9 @@ class CategoriesController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $id)
+    public function update(Request $request)
     {
-        //
+        
     }
 
     /**
@@ -93,71 +95,32 @@ class CategoriesController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function destroy($id)
+    public function destroy(Request $request)
     {
-        //
+        $category = Category::where('id', $request->id)->where('user_id', auth()->user()->id);
+        $category->delete();
+
+        if($category){
+            $categories = Category::all();
+            $html_build_tree = Category::BuildTreeHTML($categories->toArray());
+            return response()->json(array('success' => true, 'msg' => 'Category has been deleted!', 'html_build' => $html_build_tree));
+        }else{
+            return response()->json(array('success' => false, 'msg' => 'We cant delete this category, please try again!'));
+        }
+        
     }
 
     public function getCategoriesJSON(){
         $categories = Category::all()->toArray();
 
-        $array_categories = $this->buildTreeHTML($categories);
+        $array_categories = Category::BuildTreeHTML($categories);
 
         return response()->json($array_categories);
     }
 
-    function buildTree(array $elements, $parentId = 0) {
-        $branch = array();  
-        
-        foreach ($elements as $element) {
-            if ($element['parent'] == $parentId) {
-                $children = $this->buildTree($elements, $element['id']);
-                
-                if ($children) {
-                    $element['children'] = $children;
-                }
-                
-                $branch[] = $element;
-            }
-        }
-        
-        return $branch;
+    public function getCategoryDataJSON(Request $request){
+        $category = Category::where('id', $request->id)->where('user_id', auth()->user()->id)->first();
+        return response()->json($category);
     }
 
-    function buildTreeHTML(array $elements, $parentId = 0) {
-        $html = '';
-
-        foreach ($elements as $element) {
-            if ($element['parent'] == $parentId) {
-                $children = $this->buildTreeHTML($elements, $element['id']);
-                
-                if ($children != '') {
-                    $html .= "
-                            <div class='tree-folder'>
-                                <div class='tree-folder-header'>
-                                    <i class='fa fa-folder'></i>
-                                    <div class='tree-folder-name'>
-                                        {$element['name']} <div class='tree-actions'><i class='fa fa-edit'></i><i class='fa fa-trash-o'></i></div>
-                                    </div>
-                                </div>
-                                <div class='tree-folder-content' style='display:none;'>
-                                    {$children}
-                                </div>
-                                <div class='tree-loader'></div>
-                            </div>
-                            ";
-                }else{
-                    $html .= "<div class='tree-item'>
-                                <i class='tree-dot'></i>
-                                <div class='tree-item-name'>
-                                    {$element['name']} <div class='tree-actions'><i class='fa fa-edit'></i><i class='fa fa-trash-o'></i></div>
-                                </div>
-                            </div>";
-                }
-
-            }
-        }
-        
-        return $html;
-    }
 }

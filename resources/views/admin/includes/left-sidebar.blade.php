@@ -16,7 +16,6 @@
                     <span>Users</span>
                 </a>
                 <ul class="sub">
-                    <li><a href="{{route('admins.index')}}">Admins</a></li>
                     <li><a href="{{route('vendors.index')}}">Vendors</a></li>
                 </ul>
             </li>

@@ -16,7 +16,7 @@
                     @csrf
                     <div class="form-group">
                         <label for="input-title">Title</label>
-                        <input type="text" name="title" class="form-control" id="input-title" placeholder="e.g About us" required>
+                        <input type="text" name="title" class="form-control" id="input-title" placeholder="e.g About us">
                     </div>
                     <div class="form-group">
                         <label for="input-slug">Slug</label>
@@ -26,7 +26,7 @@
                         <label for="input-content">Content</label>
                         <div class="content-editor"></div>
                     </div>
-                    <button type="button" class="btn btn-primary">Submit</button>
+                    <button type="submit" class="btn btn-primary">Submit</button>
                 </form>
             </div>
         </div>
@@ -43,7 +43,7 @@
 
 @section('scripts')
 <script>
-    jQuery(document).ready(function(){
+    $(document).ready(function(){
         $('.content-editor').summernote({
             height: 200,                 // set editor height
 
@@ -51,6 +51,61 @@
             maxHeight: null,             // set maximum height of editor
 
             focus: true                 // set focus to editable area after initializing summernote
+        });
+
+        $('#form-add-page').on('submit', function(e){
+            e.preventDefault();
+            $.ajax({
+                url: $(this).attr('action'),
+                type: 'POST',
+                data: $(this).serialize()+ '&content='+$('#form-add-page').find('.content-editor').summernote('code'),
+                success: function(resp){
+                    if(resp.success){
+                        swal(resp.msg, {
+                            icon: 'success'
+                        }).then(()=>{
+                            location.href = "{{route('pages.index')}}"
+                        });
+                    }else{
+                        swal(resp.msg, {
+                            icon: 'error'
+                        });
+                    }
+                },
+                error: function(resp){
+                    let form = $('#form-add-page');
+                    let errorFields = [];
+                    $.each(resp.responseJSON.errors, function(name, error){
+                        errorFields.push(name);
+                        form.find('#input-'+name).siblings('.invalid-feedback').remove();
+                        form.find('#input-'+name).siblings('.valid-feedback').remove();
+                        form.find('#input-'+name).siblings('.invalid-feedback.valid-feedback').remove();
+                        form.find('#input-'+name).addClass('is-invalid');
+                        form.find('#input-'+name).after(`
+                            <div class="invalid-feedback">
+                            ${error}
+                            </div>
+                        `);
+                    });
+
+                    $.each(form.find('input'), function(i, field){
+                        if($.inArray($(field).attr('name'), errorFields) == -1){
+                            if($(field).attr('name') != '_token'){
+                                $(field).addClass('is-valid');
+                                $(field).siblings('.invalid-feedback').remove();
+                                $(field).siblings('.valid-feedback').remove();
+                                $(field).after('<div class="valid-feedback">Looks good!</div>'); 
+                            } 
+                        }
+                    });
+                }
+            });
+        });
+
+        $('#form-add-page').on('change, keypress', 'input', function(){
+            $(this).removeClass("is-invalid is-valid");
+            $(this).siblings('.invalid-feedback').remove();
+            $(this).siblings('.valid-feedback').remove();
         });
     });
 </script>

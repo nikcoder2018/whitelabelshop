@@ -1,8 +1,10 @@
 <?php
 
 namespace App\Http\Controllers;
-
 use Illuminate\Http\Request;
+
+use App\Http\Requests\StorePageRequest;
+use App\Http\Requests\UpdatePageRequest;
 use App\Page;
 class PagesController extends Controller
 {
@@ -33,9 +35,22 @@ class PagesController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
+    public function store(StorePageRequest $request)
     {
-        //
+        $validated = $request->validated();
+
+        $page = new Page();
+        $page->user_id = auth()->user()->id;
+        $page->title = $validated['title'];
+        $page->slug = $validated['slug'];
+        $page->content = $request->content;
+        $page->save();
+
+        if($page){
+            return response()->json(array('success' => true, 'msg' => 'New page created!'));
+        }else{
+            return response()->json(array('success' => false, 'msg' => 'Something went wrong on the system, Please try again!'));
+        }
     }
 
     /**
@@ -67,9 +82,21 @@ class PagesController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $id)
+    public function update(UpdatePageRequest $request)
     {
-        //
+        $validated = $request->validated();
+
+        $page = Page::find($request->id);
+        $page->title = $validated['title'];
+        $page->slug = $validated['slug'];
+        $page->content = $request->content;
+        $page->save();
+
+        if($page){
+            return response()->json(array('success' => true, 'msg' => 'Page updated!'));
+        }else{
+            return response()->json(array('success' => false, 'msg' => 'Something went wrong on the system, Please try again!'));
+        }
     }
 
     /**
@@ -78,8 +105,20 @@ class PagesController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function destroy($id)
+    public function destroy(Request $request)
     {
-        //
+        $page = Page::where('id', $request->id);
+        $page->delete();
+
+        if($page){
+            return response()->json(array('success' => true, 'msg' => 'Page has been deleted!'));
+        }else{
+            return response()->json(array('success' => false, 'msg' => 'We cant delete this Page, please try again!'));
+        }
+    }
+
+    public function getPageDataJSON(Request $request){
+        $page = Page::find($request->id);
+        return response()->json($page);
     }
 }

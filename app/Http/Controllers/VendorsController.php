@@ -3,6 +3,9 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Hash;
+use App\Http\Requests\StoreVendorRequest;
+use App\Http\Requests\UpdateVendorRequest;
 use App\User;
 
 class VendorsController extends Controller
@@ -34,9 +37,24 @@ class VendorsController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
+    public function store(StoreVendorRequest $request)
     {
-        //
+        $validated = $request->validated();
+
+        $vendor = new User();
+        $vendor->shop_name = $validated['shop_name'];
+        $vendor->email = $validated['email'];
+        $vendor->firstname = $validated['firstname'];
+        $vendor->lastname = $validated['lastname'];
+        $vendor->password = Hash::make($validated['password']);
+        $vendor->role = 'vendor';
+        $vendor->save();
+
+        if($vendor){
+            return response()->json(array('success' => true, 'msg' => 'New vendor created!'));
+        }else{
+            return response()->json(array('success' => false, 'msg' => 'Something went wrong on the system, Please try again!'));
+        }
     }
 
     /**
@@ -68,9 +86,22 @@ class VendorsController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $id)
+    public function update(UpdateVendorRequest $request)
     {
-        //
+        $validated = $request->validated();
+
+        $vendor = User::find($request->id);
+        $vendor->shop_name = $validated['shop_name'];
+        $vendor->email = $validated['email'];
+        $vendor->firstname = $validated['firstname'];
+        $vendor->lastname = $validated['lastname'];
+        $vendor->save();
+
+        if($vendor){
+            return response()->json(array('success' => true, 'msg' => 'Vendor updated!'));
+        }else{
+            return response()->json(array('success' => false, 'msg' => 'Something went wrong on the system, Please try again!'));
+        }
     }
 
     /**
@@ -79,8 +110,20 @@ class VendorsController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function destroy($id)
+    public function destroy(Request $request)
     {
-        //
+        $vendor = User::where('id', $request->id);
+        $vendor->delete();
+
+        if($vendor){
+            return response()->json(array('success' => true, 'msg' => 'Vendor has been deleted!'));
+        }else{
+            return response()->json(array('success' => false, 'msg' => 'We cant delete this Vendor, please try again!'));
+        }
+    }
+
+    public function getVendorDataJSON(Request $request){
+        $vendor = User::find($request->id);
+        return response()->json($vendor);
     }
 }

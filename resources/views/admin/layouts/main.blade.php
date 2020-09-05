@@ -3,9 +3,10 @@
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="">
-    <meta name="author" content="Mosaddek">
-    <meta name="keyword" content="FlatLab, Dashboard, Bootstrap, Admin, Template, Theme, Responsive, Fluid, Retina">
+
+    <!-- CSRF Token -->
+    <meta name="csrf-token" content="{{ csrf_token() }}">
+
     <link rel="shortcut icon" href="img/favicon.png">
 
     <title>{{env('APP_TITLE', 'nonameshop')}}</title>
@@ -60,7 +61,8 @@
     <script src="{{asset('js/owl.carousel.js')}}" ></script>
     <script src="{{asset('js/jquery.customSelect.min.js')}}" ></script>
     <script src="{{asset('js/respond.min.js')}}" ></script>
-
+    <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
+    
     @yield('external_js')
     <!--right slidebar-->
     <script src="{{asset('js/slidebars.min.js')}}"></script>

@@ -30,8 +30,9 @@
 </style>
 @endsection
 @section('content')
-<form class="form-add-product" action="{{route('products.store')}}" method="POST">
+<form class="form-edit-product" action="{{route('products.update')}}" method="POST">
     @csrf
+    <input type="hidden" name="id" value="{{$product->id}}">
     <div class="row">
         <div class="col-md-12">
             <div class="card">
@@ -39,7 +40,7 @@
                     All products |
                     <a href="{{route('products.index')}}" class="btn btn-white btn-sm">Products List</a>
                     <span class="pull-right">
-                        <button type="submit" class="btn btn-success btn-sm">Save & Publish</button>
+                        <button type="submit" class="btn btn-success btn-sm">Save changes</button>
                         {{-- <button type="sumbit" class="btn btn-primary btn-sm">Save as draft</button> --}}
                     </span>
                 </header>
@@ -53,7 +54,7 @@
                     Product Title
                 </div>
                 <div class="card-body">
-                    <input type="text" name="title" id="input-title" class="form-control round-input" placeholder="E.g. Blue Jeans">
+                    <input type="text" name="title" id="input-title" class="form-control round-input" value="{{$product->title}}" placeholder="E.g. Blue Jeans">
                 </div>
             </div>
 
@@ -62,7 +63,7 @@
                     Description
                 </div>
                 <div class="card-body">
-                    <div class="summernote"></div>
+                    <div class="summernote">{!!$product->description!!}</div>
                 </div>
             </div>
 
@@ -83,7 +84,7 @@
                                 <div class="row">
                                     <label class="col-sm-6 control-label" for="input-regular_price">Regular Price ($)</label>
                                     <div class="col-sm-6">
-                                    <input type="number" placeholder="Regular Price" id="input-regular_price" name="regular_price" class="form-control" min="0" step="any" value="">
+                                        <input type="number" placeholder="Regular Price" id="input-regular_price" name="regular_price" class="form-control" min="0" step="any" value="{{$product->regular_price}}">
                                     </div>
                                 </div>  
                             </div>
@@ -91,7 +92,7 @@
                                 <div class="row">
                                     <label class="col-sm-6 control-label" for="input-sale_price">Sale Price ($)</label>
                                     <div class="col-sm-6">
-                                        <input type="number" placeholder="Sale Price" id="input-sale_price" name="sale_price" class="form-control" min="0" step="any" value=""> 
+                                        <input type="number" placeholder="Sale Price" id="input-sale_price" name="sale_price" class="form-control" min="0" step="any" value="{{$product->sale_price}}"> 
                                     </div>
                                 </div>  
                             </div>
@@ -103,16 +104,16 @@
                                     <label class="col-sm-6 control-label">Manage Stock</label>
                                     <div class="col-sm-6">
                                     <label class="">
-                                        <input type="checkbox" class="enable-stock-switch"/> &nbsp; Enable stock management for product
+                                            <input type="checkbox" @if($product->stock_management == 'Y') checked @endif class="enable-stock-switch"/> &nbsp; Enable stock management for product
                                     </label>                                             
                                     </div>
                                 </div>    
                             </div>
-                            <div class="form-group stock-qty" style="display: none;">
+                            <div class="form-group stock-qty" @if($product->stock_management == 'N') style="display: none;" @endif>
                                 <div class="row">  
                                     <label class="col-sm-6 control-label" for="input-stock_qty">Stock Qty</label>
                                     <div class="col-sm-6">
-                                        <input type="number" min="0" placeholder="Stock Qty" id="input-stock_qty" name="stock_qty" class="form-control" value="0">
+                                        <input type="number" min="0" placeholder="Stock Qty" id="input-stock_qty" name="stock_qty" class="form-control" value="{{$product->stock_qty}}">
                                     </div>
                                 </div>
                             </div>
@@ -121,8 +122,8 @@
                                     <label class="col-sm-6 control-label" for="input-stock_availability_status">Stock Availability</label>
                                     <div class="col-sm-6">
                                     <select id="input-stock_availability_status" name="stock_availability_status" class="form-control select2 select2-hidden-accessible" style="width: 100%;" tabindex="-1" aria-hidden="true">
-                                        <option selected="selected" value="in_stock">In Stock</option>
-                                        <option value="out_of_stock">Out of Stock</option>                  
+                                        <option @if($product->stock_availability == 'in_stock') selected @endif value="in_stock">In Stock</option>
+                                        <option @if($product->stock_availability == 'out_of_stock') selected @endif value="out_of_stock">Out of Stock</option>                  
                                     </select>
                                     
                                     </div>
@@ -197,7 +198,11 @@
                 <div class="card-body">
                     <div class="fileupload fileupload-new" data-provides="fileupload">
                         <div class="fileupload-new thumbnail" style="width: 300px; height: 250px;">
-                            <img src="http://www.placehold.it/300x250/EFEFEF/AAAAAA&amp;text=no+image" alt="" />
+                            @if($product->image_url)
+                                <img src="{{asset($product->image_url)}}" alt="" />
+                            @else 
+                                <img src="http://www.placehold.it/300x250/EFEFEF/AAAAAA&amp;text=no+image" alt="" />
+                            @endif
                         </div>
                         <div class="fileupload-preview fileupload-exists thumbnail" style="max-width: 300px; max-height: 250px; line-height: 20px;"></div>
                         <div>
@@ -222,7 +227,15 @@
                     Tags
                 </div>
                 <div class="card-body">
-                    <input name="tags" id="tagsinput" class="tagsinput" value="" />
+                    @php 
+                    $productTags = array();
+                    if($product->tags){
+                        foreach($product->tags as $tag){
+                            array_push($productTags,$tag->tag);
+                        }
+                    }
+                    @endphp
+                    <input name="tags" id="tagsinput" class="tagsinput" value="{{implode(',',$productTags)}}" />
                     <span class="badge badge-danger">NOTE!</span><span class="help-inline">Press enter or commas to separate tags</span>
 
                     <p class="mb-2 mt-3">Choose from your tags list:</p>
@@ -234,9 +247,9 @@
         </div>
     </div>
     <div class="row">
-        <div class="col-md-12">
+        <div class="col-12">
             <span class="pull-right">
-                <button type="submit" class="btn btn-success btn-sm">Save & Publish</button>
+                <button type="submit" class="btn btn-success btn-sm">Save changes</button>
                 {{-- <button type="sumbit" class="btn btn-primary btn-sm">Save as draft</button> --}}
             </span>
         </div>
@@ -259,7 +272,7 @@
 <script>
 
     $(document).ready(function(){
-        $('.form-add-product').on('submit', function(e){
+        $('.form-edit-product').on('submit', function(e){
             e.preventDefault();
             let formData = new FormData(this);
             formData.append('description', $(this).find('.summernote').summernote('code'));
@@ -284,7 +297,7 @@
                     }
                 },
                 error: function(resp){
-                    let form = $('.form-add-product');
+                    let form = $('.form-edit-product');
                     $.each(resp.responseJSON.errors, function(name, error){
                         form.find('#input-'+name).siblings('.invalid-feedback').remove();
                         form.find('#input-'+name).siblings('.valid-feedback').remove();
@@ -339,3 +352,4 @@
 
 </script>
 @endsection
+

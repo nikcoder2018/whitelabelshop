@@ -100,6 +100,14 @@
       this.$input.attr('name', '')
 
       //ie8+ doesn't support changing the value of input with type=file so clone instead
+      $.browser = {};
+      $.browser.msie = false;
+      $.browser.version = 0;
+      if (navigator.userAgent.match(/MSIE ([0-9]+)\./)) {
+          $.browser.msie = true;
+          $.browser.version = RegExp.$1;
+      }
+
       if($.browser.msie){
           var inputClone = this.$input.clone(true);
           this.$input.after(inputClone);

@@ -1,5 +1,15 @@
 @extends('admin.layouts.main')
 
+@section('stylesheets')
+<style>
+    .p-thumb img {
+        width: 50px;
+        height: 50px;
+        border-radius: 3px;
+        -webkit-border-radius: 3px;
+    }
+</style>
+@endsection
 @section('content')
 <!-- page start-->
 <section class="card">
@@ -36,20 +46,27 @@
         <tbody>
             @foreach($products as $product)
             <tr>
-                <td><a href="#"><img alt="image" class="" src="{{asset('img/product-list/pro-thumb-1.jpg')}}"></a></td>
+                <td><a href="#" class="thumb p-thumb"><img alt="image" src="{{asset($product->image_url)}}"></a></td>
                 <td class="p-name">
                     {{$product->title}}
                 </td>
-                <td></td>
-                <td>{{$product->price}}</td>
+                <td>
+                    @if($product->categories)
+                        @foreach($product->categories as $category)
+                            @php $category = App\Category::where('id', $category->category_id)->first(); @endphp
+                            <span>{{$category->name}}</span> <br>
+                        @endforeach
+                    @endif
+                </td>
+                <td>{{$product->regular_price}}</td>
                 <td>
                     <span class="badge badge-primary">{{ucfirst($product->status)}}</span>
                 </td>
                 <td>{{$product->vendor->shop_name}}</td>
                 <td>
-                    <a href="#" class="btn btn-primary btn-sm"><i class="fa fa-eye"></i> View </a>
-                    <a href="#" class="btn btn-info btn-sm"><i class="fa fa-pencil"></i> Edit </a>
-                    <a href="#" class="btn btn-danger btn-sm"><i class="fa fa-trash-o"></i> Delete </a>
+                    <a href="#" class="btn btn-primary btn-sm btn-view"><i class="fa fa-eye"></i> View </a>
+                    <a href="{{route('products.edit', $product->id)}}" class="btn btn-info btn-sm btn-edit"><i class="fa fa-pencil"></i> Edit </a>
+                    <button class="btn btn-danger btn-sm btn-delete" data-id="{{$product->id}}"><i class="fa fa-trash-o"></i> Delete </button>
                 </td>
             </tr>
             @endforeach
@@ -58,4 +75,44 @@
     @endif
 </section>
 <!-- page end-->
+@endsection
+
+@section('scripts')
+<script>
+    $('.btn-delete').on('click', function(){
+        let product_id = $(this).data('id');
+        swal({
+                title: "Are you sure?",
+                text: "Once deleted, you will not be able to recover this product!",
+                icon: "warning",
+                buttons: true,
+                dangerMode: true,
+            }).then(async (willDelete) => {
+                if (willDelete) {
+
+                    let goDelete = await $.ajax({
+                        url: "{{route('products.destroy')}}",
+                        type: 'POST',
+                        data: {
+                            _token: $('meta[name="csrf-token"]').attr('content'),
+                            id: product_id
+                        }
+                    });
+
+                    if(goDelete.success){
+                        swal(goDelete.msg, {
+                            icon: "success",
+                        }).then(()=>{
+                            location.reload();
+                        });
+                    }else{
+                        swal(goDelete.msg, {
+                            icon: "error"
+                        });
+                    }
+                    
+                }
+            });
+    });
+</script>
 @endsection
