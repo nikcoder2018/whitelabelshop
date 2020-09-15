@@ -3,6 +3,10 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Session;
+use Illuminate\Support\Str;
+use Illuminate\Http\UploadedFile;
 
 use App\Category;
 
@@ -45,6 +49,24 @@ class CategoriesController extends Controller
         $category->user_id = Auth()->user()->id;
         $category->name = $request->name;
         $category->slug = $request->slug;
+        $category->description = $request->description;
+        if($request->hasFile('image')){
+            if($request->file('image')->isValid()){
+                // Get image file
+                $image = $request->file('image');
+
+                // Make a image name based on user name and current timestamp
+                $name = Str::slug($request->name).'_'.time();
+
+                $extension = $request->image->extension();
+
+                $request->image->storeAs('/public/categories', $name.".".$extension);
+                $url = Storage::url('categories/'.$name.".".$extension);
+
+                $category->image = $url;
+            }
+        }
+        $category->icon = $request->icon;
         $category->parent = $request->parent;
         $category->save();
 
@@ -86,7 +108,35 @@ class CategoriesController extends Controller
      */
     public function update(Request $request)
     {
-        
+        $category = Category::find($request->id);
+        $category->name = $request->name;
+        $category->slug = $request->slug;
+        $category->description = $request->description;
+        if($request->hasFile('image')){
+            if($request->file('image')->isValid()){
+                // Get image file
+                $image = $request->file('image');
+
+                // Make a image name based on user name and current timestamp
+                $name = Str::slug($request->name).'_'.time();
+
+                $extension = $request->image->extension();
+
+                $request->image->storeAs('/public/categories', $name.".".$extension);
+                $url = Storage::url('categories/'.$name.".".$extension);
+
+                $category->image = $url;
+            }
+        }
+        $category->icon = $request->icon;
+        $category->parent = $request->parent;
+        $category->save();
+
+        if($category){
+            $categories = Category::all();
+            $html_build_tree = Category::BuildTreeHTML($categories->toArray());
+            return response()->json(array('success' => true, 'msg' => 'Category updated successfully.', 'html_build' => $html_build_tree));
+        }
     }
 
     /**

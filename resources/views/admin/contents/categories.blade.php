@@ -1,7 +1,14 @@
 @extends('admin.layouts.main')
 
 @section('external_css')
-    <link rel="stylesheet" type="text/css" href="{{asset('assets/fuelux/css/tree-style.css')}}" />
+    <link href="{{asset('assets/bootstrap-fileupload/bootstrap-fileupload.css')}}" rel="stylesheet"/>
+    <link href="{{asset('assets/fuelux/css/tree-style.css')}}" rel="stylesheet" />
+    <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.6.1/css/font-awesome.min.css" rel="stylesheet" />
+    <style>
+        select {
+            font-family: 'FontAwesome', 'sans-serif';
+        }
+    </style>
 @endsection
 
 @section('content')
@@ -21,6 +28,36 @@
                     <div class="form-group">
                         <label for="input-slug">Slug</label>
                         <input type="text" name="slug" class="form-control" id="input-slug" placeholder="e.g mens-clothing">
+                    </div>
+                    <div class="form-group">
+                        <label for="input-slug">Description</label>
+                        <textarea name="description" cols="30" rows="6" class="form-control"></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label for="input-slug">Select Icon</label>
+                        {!!view('admin.components.input-select-icons', ['name' => 'icon'])->render()!!}
+                    </div>
+                    <div class="form-group">
+                        <div class="fileupload fileupload-new" data-provides="fileupload">
+                            <div class="fileupload-new thumbnail" style="width: 300px; height: 250px;">
+                                <img src="http://www.placehold.it/300x250/EFEFEF/AAAAAA&amp;text=no+image" alt="" />
+                            </div>
+                            <div class="fileupload-preview fileupload-exists thumbnail" style="max-width: 300px; max-height: 250px; line-height: 20px;"></div>
+                            <div>
+                             <span class="btn btn-sm btn-white btn-file">
+                                <span class="fileupload-new"><i class="fa fa-paper-clip"></i> Select image</span>
+                                <span class="fileupload-exists"><i class="fa fa-undo"></i> Change</span>
+                                <input type="file" name="image" class="default" />
+                             </span>
+                            <span class="btn btn-sm btn-danger fileupload-exists" data-dismiss="fileupload"><i class="fa fa-trash"></i> Remove</span>
+                            </div>
+                        </div>
+                        <span class="badge badge-danger">NOTE!</span>
+                       <span>
+                       Attached image thumbnail is
+                       supported in Latest Firefox, Chrome, Opera,
+                       Safari and Internet Explorer 10 only
+                       </span>
                     </div>
                     <div class="form-group">
                         <label for="input-parent">Parent</label>
@@ -53,6 +90,36 @@
                     <div class="form-group">
                         <label for="input-slug">Slug</label>
                         <input type="text" name="slug" class="form-control" id="input-slug" placeholder="e.g mens-clothing">
+                    </div>
+                    <div class="form-group">
+                        <label for="input-slug">Description</label>
+                        <textarea name="description" cols="30" rows="6" class="form-control"></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label for="input-slug">Select Icon</label>
+                        {!!view('admin.components.input-select-icons', ['name' => 'icon'])->render()!!}
+                    </div>
+                    <div class="form-group">
+                        <div class="fileupload fileupload-new" data-provides="fileupload">
+                            <div class="fileupload-new thumbnail" style="width: 300px; height: 250px;">
+                                <img src="http://www.placehold.it/300x250/EFEFEF/AAAAAA&amp;text=no+image" class="thumbnail-image" alt="" />
+                            </div>
+                            <div class="fileupload-preview fileupload-exists thumbnail" style="max-width: 300px; max-height: 250px; line-height: 20px;"></div>
+                            <div>
+                             <span class="btn btn-sm btn-white btn-file">
+                                <span class="fileupload-new"><i class="fa fa-paper-clip"></i> Select image</span>
+                                <span class="fileupload-exists"><i class="fa fa-undo"></i> Change</span>
+                                <input type="file" name="image" class="default" />
+                             </span>
+                            <span class="btn btn-sm btn-danger fileupload-exists" data-dismiss="fileupload"><i class="fa fa-trash"></i> Remove</span>
+                            </div>
+                        </div>
+                        <span class="badge badge-danger">NOTE!</span>
+                       <span>
+                       Attached image thumbnail is
+                       supported in Latest Firefox, Chrome, Opera,
+                       Safari and Internet Explorer 10 only
+                       </span>
                     </div>
                     <div class="form-group">
                         <label for="input-parent">Parent</label>
@@ -89,6 +156,7 @@
 
 @section('external_js')
     <script src="{{asset('assets/fuelux/js/tree.min.js')}}"></script>
+    <script src="{{asset('assets/bootstrap-fileupload/bootstrap-fileupload.js')}}"></script>
 @endsection
 
 @section('scripts')
@@ -101,7 +169,10 @@
                 $.ajax({
                     url: $(this).attr('action'),
                     type: 'POST',
-                    data: $(this).serialize(),
+                    data:  new FormData(this),
+                    contentType: false,
+                    cache: false,
+                    processData:false,
                     success: function(resp){
                         if(resp.success){
                             $('#FlatTree3').hide();
@@ -111,7 +182,30 @@
                     }
                 });
             });
-
+            $('#form-edit-category').on('submit', function(e){
+                e.preventDefault();
+                $.ajax({
+                    url: $(this).attr('action'),
+                    type: 'POST',
+                    data:  new FormData(this),
+                    contentType: false,
+                    cache: false,
+                    processData:false,
+                    success: function(resp){
+                        if(resp.success){
+                            swal(resp.msg, {
+                                icon: "success",
+                            }).then(()=>{
+                                $('#FlatTree3').hide();
+                                $('#FlatTree3').html(resp.html_build).fadeIn();
+                                $('#form-edit-category').find('.thumbnail-image').attr('src', 'http://www.placehold.it/300x250/EFEFEF/AAAAAA&amp;text=no+image');
+                                $('#form-edit-category')[0].reset();
+                            });
+                            
+                        }
+                    }
+                });
+            });
             $('#FlatTree3').on('click', '.edit-category', async function(e){
                 e.stopPropagation();
                 let category_id = $(this).data('id');
@@ -132,6 +226,9 @@
                 form_edit.find('input[name=id]').val(category.id);
                 form_edit.find('input[name=name]').val(category.name);
                 form_edit.find('input[name=slug]').val(category.slug);
+                form_edit.find('textarea[name=description]').val(category.description);
+                form_edit.find('select[name=icon]').val(category.icon);
+                form_edit.find('.thumbnail-image').attr('src', category.image);
                 form_edit.find('select[name=parent]').val(category.parent);
                 
             });

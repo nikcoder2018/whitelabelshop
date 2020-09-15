@@ -4,24 +4,25 @@
         <!-- sidebar menu start-->
         <ul class="sidebar-menu" id="nav-accordion">
             <li>
-                <a class="active" href="{{route('dashboard')}}">
+                <a class="{{ Request::segment(2) === 'dashboard' ? 'active' : null }}" href="{{route('dashboard')}}">
                     <i class="fa fa-dashboard"></i>
                     <span>Dashboard</span>
                 </a>
             </li>
             @if(Auth::user()->role == 'admin')
             <li class="sub-menu">
-                <a href="javascript:;" >
+                <a href="javascript:;" class="{{ Request::segment(2) === 'users' ? 'active' : null }}">
                     <i class="fa fa-users"></i>
                     <span>Users</span>
                 </a>
                 <ul class="sub">
+                    <li><a href="{{route('admins.index')}}">Admins</a></li>
                     <li><a href="{{route('vendors.index')}}">Vendors</a></li>
                 </ul>
             </li>
             @endif
             <li class="sub-menu">
-                <a href="javascript:;" >
+                <a href="javascript:;" class="{{ Request::segment(2) === 'pages' ? 'active' : null }}">
                     <i class="fa fa-book"></i>
                     <span>Pages</span>
                 </a>
@@ -30,23 +31,26 @@
                     <li><a href="{{route('pages.create')}}">Add New Page</a></li>
                 </ul>
             </li>
-
-            <li class="sub-menu">
-                <a href="javascript:;" >
-                    <i class="fa fa-shopping-cart"></i>
-                    <span>Products</span>
+            <li>
+                <a href="{{route('posts.index')}}" class="{{ Request::segment(2) === 'posts' ? 'active' : null }}">
+                    <i class="fa fa-thumb-tack"></i>
+                    <span>Posts</span>
                 </a>
-                <ul class="sub">
-                    <li><a href="{{route('products.index')}}">All Products</a></li>
-                    <li><a href="{{route('products.create')}}">Add Product</a></li>
-                    <li><a href="{{route('categories.index')}}">Categories</a></li>
-                    <li><a href="{{route('tags.index')}}">Tags</a></li>
-                    <li><a href="{{route('attributes.index')}}">Attributes</a></li>
-                </ul>
             </li>
-
+            <li>
+                <a href="{{route('categories.index')}}" class="{{ Request::segment(2) === 'categories' ? 'active' : null }}">
+                    <i class="fa fa-list-ul"></i>
+                    <span>Categories</span>
+                </a>
+            </li>
+            <li>
+                <a href="{{route('tags.index')}}" class="{{ Request::segment(2) === 'tags' ? 'active' : null }}" >
+                    <i class="fa fa-tags"></i>
+                    <span>Tags</span>
+                </a>
+            </li>
             <li class="sub-menu">
-                <a href="javascript:;" >
+                <a href="javascript:;" class="{{ Request::segment(2) === 'setting' ? 'active' : null }}">
                     <i class="fa fa-cogs"></i>
                     <span>Settings</span>
                 </a>

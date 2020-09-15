@@ -40,4 +40,8 @@ class User extends Authenticatable
     function products(){
         return $this->hasMany(Products::class);
     }
+    
+    function posts(){
+        return $this->hasMany(Post::class);
+    }
 }

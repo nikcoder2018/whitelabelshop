@@ -38,8 +38,8 @@ class ProductsController extends Controller
      */
     public function create()
     {
-        $data['categories'] = Category::where('user_id', Auth::user()->id)->get();
-        $data['tags'] = Tag::where('user_id', Auth::user()->id)->get();
+        $data['categories'] = Category::all();
+        $data['tags'] = Tag::all();
         $data['categoriesHTML'] = Category::BuildTreeHTML2(Category::all()->toArray());
         
         #return response()->json($data);exit;
