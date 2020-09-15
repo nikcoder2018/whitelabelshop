@@ -25,8 +25,10 @@ class UpdateVendorRequest extends FormRequest
     {
         return [
             'id' => 'required',
-            'shop_name' => 'required|max:64|unique:users,shop_name,'.$this->id,
-            'email' => 'required|email',
+            'shop_name' => 'required|max:64',
+            'email' => 'required|email|unique:users,email,'.$this->id,
+            'vat' => 'required',
+            'contactpersonnumber' => 'required',
             'firstname' => 'required|max:64',
             'lastname' => 'required|max:64',
         ];

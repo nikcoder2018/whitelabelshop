@@ -52,6 +52,10 @@ Route::group(['middleware' => 'auth'], function(){
         Route::post('categories/update', 'CategoriesController@update')->name('categories.update');
         Route::post('categories/delete', 'CategoriesController@destroy')->name('categories.destroy');
 
+        Route::resource('locations', 'LocationsController', ['except' => ['update', 'destroy']]);
+        Route::post('locations/update', 'LocationsController@update')->name('locations.update');
+        Route::post('locations/delete', 'LocationsController@destroy')->name('locations.destroy');
+
 
         Route::resource('attributes', 'AttributesController');
 
@@ -63,6 +67,7 @@ Route::group(['middleware' => 'auth'], function(){
             Route::post('get_page', 'PagesController@getPageDataJSON')->name('json.getpagedata');
             Route::post('get_post', 'PostsController@getPostDataJSON')->name('json.getpostdata');
             Route::post('get_tag', 'TagsController@getTagDataJSON')->name('json.gettagdata');
+            Route::post('get_location', 'LocationsController@getLocationDataJSON')->name('json.getlocationdata');
         });
     });
 });

@@ -44,4 +44,8 @@ class User extends Authenticatable
     function posts(){
         return $this->hasMany(Post::class);
     }
+
+    function vendor_details(){
+        return $this->hasOne(VendorDetails::class, 'user_id', 'id');
+    }
 }

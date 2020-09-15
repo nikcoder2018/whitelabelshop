@@ -7,6 +7,7 @@ use Illuminate\Support\Facades\Hash;
 use App\Http\Requests\StoreVendorRequest;
 use App\Http\Requests\UpdateVendorRequest;
 use App\User;
+use App\VendorDetails;
 
 class VendorsController extends Controller
 {
@@ -17,7 +18,9 @@ class VendorsController extends Controller
      */
     public function index()
     {
-        $data['vendors'] = User::where('role', 'vendor')->get();
+        $data['vendors'] = User::with('vendor_details')->where('role', 'vendor')->get();
+
+        #return response()->json($data);
         return view('admin.contents.users-vendors',$data);
     }
 
@@ -42,7 +45,6 @@ class VendorsController extends Controller
         $validated = $request->validated();
 
         $vendor = new User();
-        $vendor->shop_name = $validated['shop_name'];
         $vendor->email = $validated['email'];
         $vendor->firstname = $validated['firstname'];
         $vendor->lastname = $validated['lastname'];
@@ -50,7 +52,20 @@ class VendorsController extends Controller
         $vendor->role = 'vendor';
         $vendor->save();
 
-        if($vendor){
+        $vendor_details = new VendorDetails();
+        $vendor_details->user_id = $vendor->id;
+        $vendor_details->vendor_name = $validated['shop_name'];
+        $vendor_details->vat = $validated['vat'];
+        $vendor_details->address = $request->address;
+        $vendor_details->region = $request->region;
+        $vendor_details->city = $request->city;
+        $vendor_details->phone = $request->phone;
+        $vendor_details->contact_person_name = $request->contactperson;
+        $vendor_details->contact_person_number = $validated['contactpersonnumber'];
+        $vendor_details->subscription = $request->subscription;
+        $vendor_details->save();
+
+        if($vendor && $vendor_details){
             return response()->json(array('success' => true, 'msg' => 'New vendor created!'));
         }else{
             return response()->json(array('success' => false, 'msg' => 'Something went wrong on the system, Please try again!'));
@@ -91,13 +106,35 @@ class VendorsController extends Controller
         $validated = $request->validated();
 
         $vendor = User::find($request->id);
-        $vendor->shop_name = $validated['shop_name'];
         $vendor->email = $validated['email'];
         $vendor->firstname = $validated['firstname'];
         $vendor->lastname = $validated['lastname'];
-        $vendor->save();
 
-        if($vendor){
+        if($request->password)
+        $vendor->password = Hash::make($request->password);
+
+        $vendor->role = 'vendor';
+        $vendor->save();
+        
+        if(VendorDetails::where('user_id', $vendor->id)->exists())
+            $vendor_details = VendorDetails::where('user_id', $vendor->id)->first();
+        else 
+            $vendor_details = new VendorDetails;
+
+        $vendor_details->user_id = $vendor->id;
+        $vendor_details->vendor_name = $validated['shop_name'];
+        $vendor_details->vat = $validated['vat'];
+        $vendor_details->address = $request->address;
+        $vendor_details->region = $request->region;
+        $vendor_details->city = $request->city;
+        $vendor_details->phone = $request->phone;
+        $vendor_details->contact_person_name = $request->contactperson;
+        $vendor_details->contact_person_number = $validated['contactpersonnumber'];
+        $vendor_details->subscription = $request->subscription;
+        $vendor_details->save();
+
+        if($vendor && $vendor_details){
+
             return response()->json(array('success' => true, 'msg' => 'Vendor updated!'));
         }else{
             return response()->json(array('success' => false, 'msg' => 'Something went wrong on the system, Please try again!'));
@@ -123,7 +160,7 @@ class VendorsController extends Controller
     }
 
     public function getVendorDataJSON(Request $request){
-        $vendor = User::find($request->id);
+        $vendor = User::with('vendor_details')->find($request->id);
         return response()->json($vendor);
     }
 }

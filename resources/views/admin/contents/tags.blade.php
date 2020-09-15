@@ -213,7 +213,6 @@
             form_edit.find('.thumbnail-image').attr('src', "http://www.placehold.it/300x250/EFEFEF/AAAAAA&amp;text=no+image");
 
             form_edit.find('.btn-delete').attr('data-id', tag.id);
-
         });
 
         $('.btn-addnew').on('click',function(){

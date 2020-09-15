@@ -38,6 +38,12 @@
                 </a>
             </li>
             <li>
+                <a href="{{route('locations.index')}}" class="{{ Request::segment(2) === 'locations' ? 'active' : null }}">
+                    <i class="fa fa-map-marker"></i>
+                    <span>Locations</span>
+                </a>
+            </li>
+            <li>
                 <a href="{{route('categories.index')}}" class="{{ Request::segment(2) === 'categories' ? 'active' : null }}">
                     <i class="fa fa-list-ul"></i>
                     <span>Categories</span>

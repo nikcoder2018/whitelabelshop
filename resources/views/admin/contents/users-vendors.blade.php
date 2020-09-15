@@ -13,7 +13,6 @@
         <div class="row">
             <div class="col-md-12">
                 @if(count($vendors) > 0)
-                    @foreach($vendors as $vendor)
                     <table class="table table-hover p-table">
                         <thead>
                         <tr>
@@ -25,27 +24,27 @@
                         </tr>
                         </thead>
                         <tbody>
-                        <tr>
-                            <td class="p-name">
-                                <a href="#">{{$vendor->firstname}} {{$vendor->lastname}}</a>
-                                <br>
-                                <small>Registered {{date('m.d.Y',strtotime($vendor->created_at))}}</small>
-                            </td>
-                            <td>{{$vendor->shop_name}}</td>
-                            <td>{{$vendor->email}}</td>
-                            <td>
-                                <span class="badge badge-primary">{{ucfirst($vendor->status)}}</span>
-                            </td>
-                            <td>
-                                <a href="#" class="btn btn-primary btn-sm"><i class="fa fa-eye"></i> View </a>
-                                <button class="btn btn-info btn-sm btn-edit" data-id="{{$vendor->id}}"><i class="fa fa-pencil"></i> Edit </button>
-                                <button class="btn btn-danger btn-sm btn-delete" data-id="{{$vendor->id}}"><i class="fa fa-trash-o"></i> Delete </button>
-                            </td>
-                        </tr>
-                
+                            @foreach($vendors as $vendor)
+                                <tr>
+                                    <td class="p-name">
+                                        <a href="#">{{$vendor->firstname}} {{$vendor->lastname}}</a>
+                                        <br>
+                                        <small>Registered {{date('m.d.Y',strtotime($vendor->created_at))}}</small>
+                                    </td>
+                                    <td>{{@$vendor->vendor_details->vendor_name}}</td>
+                                    <td>{{$vendor->email}}</td>
+                                    <td>
+                                        <span class="badge badge-primary">{{ucfirst($vendor->status)}}</span>
+                                    </td>
+                                    <td>
+                                        <a href="#" class="btn btn-primary btn-sm"><i class="fa fa-eye"></i> View </a>
+                                        <button class="btn btn-info btn-sm btn-edit" data-id="{{$vendor->id}}"><i class="fa fa-pencil"></i> Edit </button>
+                                        <button class="btn btn-danger btn-sm btn-delete" data-id="{{$vendor->id}}"><i class="fa fa-trash-o"></i> Delete </button>
+                                    </td>
+                                </tr>
+                            @endforeach
                         </tbody>
                     </table>
-                    @endforeach
                 @else 
                 <p>No records found!</p>
                 @endif
@@ -59,7 +58,7 @@
 @section('modals')
 <!-- Modal -->
 <div class="modal fade " id="modal-add" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
-    <div class="modal-dialog" role="document">
+    <div class="modal-dialog modal-lg" role="document">
         <div class="modal-content">
             <div class="modal-header">
                 <h5 class="modal-title" id="myModal">Add new vendor</h5>
@@ -70,30 +69,79 @@
             <form action="{{route('vendors.store')}}" id="form-add-vendor" method="POST">
                 @csrf
                 <div class="modal-body">
-                        <div class="form-group">
-                            <label for="input-shop">Shop name</label>
+                    <div class="form-row">
+                        <div class="col-md-6 mb-3">
+                            <label for="input-shop">*Restaurant name (Naziv restorana)</label>
                             <input type="text" name="shop_name" class="form-control" id="input-shop_name" placeholder="Enter shopname">
                         </div>
-                        <div class="form-group">
-                            <label for="input-email">Email address</label>
+                        <div class="col-md-6 mb-3">
+                            <label for="input-email">*Email address</label>
                             <input type="email" name="email" class="form-control" id="input-email" placeholder="Enter email">
                         </div>
-                        <div class="form-group">
+                    </div>
+                    <div class="form-row">
+                        <div class="col-md-6 mb-3">
                             <label for="input-fname">First name</label>
                             <input type="text" name="firstname" class="form-control" id="input-firstname" placeholder="Enter firstname">
                         </div>
-                        <div class="form-group">
+                        <div class="col-md-6 mb-3">
                             <label for="input-lname">Last name</label>
                             <input type="text" name="lastname" class="form-control" id="input-lastname" placeholder="Enter lastname">
                         </div>
-                        <div class="form-group">
+                    </div> 
+                    <div class="form-row">
+                        <div class="col-md-12 mb-3">
+                            <label for="input-address">Address (Adresa)</label>
+                            <input type="text" name="address" class="form-control" id="input-address" placeholder="Address">
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="col-md-4 mb-3">
+                            <label for="input-region">Region(Region)</label>
+                            <input type="text" name="region" class="form-control" id="input-region" placeholder="Region">
+                        </div>
+                        <div class="col-md-4 mb-3">
+                            <label for="input-city">City(Grad)</label>
+                            <input type="text" name="city" class="form-control" id="input-city" placeholder="City">
+                        </div>
+                        <div class="col-md-4 mb-3">
+                            <label for="input-phone">Phone number</label>
+                            <input type="text" name="phone" class="form-control" id="input-phone" placeholder="Phone number">
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="col-md-6 mb-3">
+                            <label for="input-contactperson">Name of contact persone (Ime kontakt osobe) </label>
+                            <input type="text" name="contactperson" class="form-control" id="input-contactperson" placeholder="Contact Person">
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label for="input-contactpersonnumber">*Phone of contact persone (Telefon kontakt osobe)</label>
+                            <input type="text" name="contactpersonnumber" class="form-control" id="input-contactpersonnumber" placeholder="Contact Person Phone Number">
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="col-md-6 mb-3">
+                            <label for="input-contactperson">*VAT (PDV)</label>
+                            <input type="text" name="vat" class="form-control" id="input-vat" placeholder="VAT">
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label for="input-subscription">Subscription Plan</label>
+                            <select name="subscription" class="form-control">
+                                <option value="basic">Basic Plan</option>
+                                <option value="premium">Premium Plan</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="col-md-6 mb-3">
                             <label for="input-password">Password</label>
                             <input type="password" name="password" class="form-control" id="input-password" placeholder="Password">
                         </div>
-                        <div class="form-group">
+                        <div class="col-md-6 mb-3">
                             <label for="input-cpassword">Confirm Password</label>
                             <input type="password" name="password_confirmation" class="form-control" id="input-password_confirmation" placeholder="Confirm Password">
                         </div>
+                    </div>
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
@@ -104,7 +152,7 @@
     </div>
 </div>
 <div class="modal fade " id="modal-edit" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
-    <div class="modal-dialog" role="document">
+    <div class="modal-dialog modal-lg" role="document">
         <div class="modal-content">
             <div class="modal-header">
                 <h5 class="modal-title" id="myModal">Edit vendor</h5>
@@ -116,22 +164,79 @@
                 @csrf
                 <input type="hidden" name="id">
                 <div class="modal-body">
-                        <div class="form-group">
-                            <label for="input-shop">Shop name</label>
+                    <div class="form-row">
+                        <div class="col-md-6 mb-3">
+                            <label for="input-shop">*Restaurant name (Naziv restorana)</label>
                             <input type="text" name="shop_name" class="form-control" id="input-shop_name" placeholder="Enter shopname">
                         </div>
-                        <div class="form-group">
-                            <label for="input-email">Email address</label>
+                        <div class="col-md-6 mb-3">
+                            <label for="input-email">*Email address</label>
                             <input type="email" name="email" class="form-control" id="input-email" placeholder="Enter email">
                         </div>
-                        <div class="form-group">
+                    </div>
+                    <div class="form-row">
+                        <div class="col-md-6 mb-3">
                             <label for="input-fname">First name</label>
                             <input type="text" name="firstname" class="form-control" id="input-firstname" placeholder="Enter firstname">
                         </div>
-                        <div class="form-group">
+                        <div class="col-md-6 mb-3">
                             <label for="input-lname">Last name</label>
                             <input type="text" name="lastname" class="form-control" id="input-lastname" placeholder="Enter lastname">
                         </div>
+                    </div> 
+                    <div class="form-row">
+                        <div class="col-md-12 mb-3">
+                            <label for="input-address">Address (Adresa)</label>
+                            <input type="text" name="address" class="form-control" id="input-address" placeholder="Address">
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="col-md-4 mb-3">
+                            <label for="input-region">Region(Region)</label>
+                            <input type="text" name="region" class="form-control" id="input-region" placeholder="Region">
+                        </div>
+                        <div class="col-md-4 mb-3">
+                            <label for="input-city">City(Grad)</label>
+                            <input type="text" name="city" class="form-control" id="input-city" placeholder="City">
+                        </div>
+                        <div class="col-md-4 mb-3">
+                            <label for="input-phone">Phone number</label>
+                            <input type="text" name="phone" class="form-control" id="input-phone" placeholder="Phone number">
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="col-md-6 mb-3">
+                            <label for="input-contactperson">Name of contact persone (Ime kontakt osobe) </label>
+                            <input type="text" name="contactperson" class="form-control" id="input-contactperson" placeholder="Contact Person">
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label for="input-contactpersonnumber">*Phone of contact persone (Telefon kontakt osobe)</label>
+                            <input type="text" name="contactpersonnumber" class="form-control" id="input-contactpersonnumber" placeholder="Contact Person Phone Number">
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="col-md-6 mb-3">
+                            <label for="input-contactperson">*VAT (PDV)</label>
+                            <input type="text" name="vat" class="form-control" id="input-vat" placeholder="VAT">
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label for="input-subscription">Subscription Plan</label>
+                            <select name="subscription" class="form-control">
+                                <option value="basic">Basic Plan</option>
+                                <option value="premium">Premium Plan</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="col-md-6 mb-3">
+                            <label for="input-password">Password</label>
+                            <input type="password" name="password" class="form-control" id="input-password" placeholder="Password">
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label for="input-cpassword">Confirm Password</label>
+                            <input type="password" name="password_confirmation" class="form-control" id="input-password_confirmation" placeholder="Confirm Password">
+                        </div>
+                    </div>
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
@@ -217,10 +322,22 @@
             });
             modal.modal('show');
             form.find('input[name=id]').val(vendor.id);
-            form.find('input[name=shop_name]').val(vendor.shop_name);
             form.find('input[name=email]').val(vendor.email);
             form.find('input[name=firstname]').val(vendor.firstname);
             form.find('input[name=lastname]').val(vendor.lastname);
+            
+            if(vendor.vendor_details){
+                form.find('input[name=shop_name]').val(vendor.vendor_details.vendor_name);
+                form.find('input[name=address]').val(vendor.vendor_details.address);
+                form.find('input[name=region]').val(vendor.vendor_details.region);
+                form.find('input[name=city]').val(vendor.vendor_details.city);
+                form.find('input[name=phone]').val(vendor.vendor_details.phone);
+                form.find('input[name=vat]').val(vendor.vendor_details.vat);
+                form.find('input[name=contactperson]').val(vendor.vendor_details.contact_person_name);
+                form.find('input[name=contactpersonnumber]').val(vendor.vendor_details.contact_person_number);
+                form.find('select[name=subscription]').val(vendor.vendor_details.subscription);
+
+            }
         });
 
         $('#form-edit-vendor').on('submit', function(e){

@@ -24,8 +24,10 @@ class StoreVendorRequest extends FormRequest
     public function rules()
     {
         return [
-            'shop_name' => 'required|unique:users|max:64',
-            'email' => 'required|email',
+            'shop_name' => 'required|max:64',
+            'email' => 'required|email|unique:users,email,'.$this->id,
+            'vat' => 'required',
+            'contactpersonnumber' => 'required',
             'firstname' => 'required|max:64',
             'lastname' => 'required|max:64',
             'password' => 'required|confirmed',
