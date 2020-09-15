@@ -13,7 +13,6 @@
         <div class="row">
             <div class="col-md-12">
                 @if(count($admins) > 0)
-                    @foreach($admins as $admin)
                     <table class="table table-hover p-table">
                         <thead>
                         <tr>
@@ -24,26 +23,26 @@
                         </tr>
                         </thead>
                         <tbody>
-                        <tr>
-                            <td class="p-name">
-                                <a href="#">{{$admin->firstname}} {{$admin->lastname}}</a>
-                                <br>
-                                <small>Registered {{date('m.d.Y',strtotime($admin->created_at))}}</small>
-                            </td>
-                            <td>{{$admin->email}}</td>
-                            <td>
-                                <span class="badge badge-primary">{{ucfirst($admin->status)}}</span>
-                            </td>
-                            <td>
-                                <a href="#" class="btn btn-primary btn-sm"><i class="fa fa-eye"></i> View </a>
-                                <a href="#" class="btn btn-info btn-sm"><i class="fa fa-pencil"></i> Edit </a>
-                                <a href="#" class="btn btn-danger btn-sm"><i class="fa fa-trash-o"></i> Delete </a>
-                            </td>
-                        </tr>
-                
+                            @foreach($admins as $admin)
+                                <tr>
+                                    <td class="p-name">
+                                        <a href="#">{{$admin->firstname}} {{$admin->lastname}}</a>
+                                        <br>
+                                        <small>Registered {{date('m.d.Y',strtotime($admin->created_at))}}</small>
+                                    </td>
+                                    <td>{{$admin->email}}</td>
+                                    <td>
+                                        <span class="badge badge-primary">{{ucfirst($admin->status)}}</span>
+                                    </td>
+                                    <td>
+                                        <a href="#" class="btn btn-primary btn-sm"><i class="fa fa-eye"></i> View </a>
+                                        <a href="#" class="btn btn-info btn-sm"><i class="fa fa-pencil"></i> Edit </a>
+                                        <a href="#" class="btn btn-danger btn-sm"><i class="fa fa-trash-o"></i> Delete </a>
+                                    </td>
+                                </tr>
+                            @endforeach
                         </tbody>
                     </table>
-                    @endforeach
                 @else 
                 <p>No records found!</p>
                 @endif
