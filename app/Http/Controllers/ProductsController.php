@@ -14,6 +14,7 @@ use App\ProductTag;
 use App\ProductCategory;
 use App\Category;
 use App\Tag;
+use App\User;
 use Auth;
 
 class ProductsController extends Controller
@@ -25,7 +26,7 @@ class ProductsController extends Controller
      */
     public function index()
     {
-        $data['products'] = Product::with(['vendor','categories'])->where('user_id', Auth::user()->id)->get();
+        $data['products'] = Product::with(['vendor','categories'])->get();
         
         #return response()->json($data);exit;
         return view('admin.contents.products',$data);
@@ -41,7 +42,8 @@ class ProductsController extends Controller
         $data['categories'] = Category::all();
         $data['tags'] = Tag::all();
         $data['categoriesHTML'] = Category::BuildTreeHTML2(Category::all()->toArray());
-        
+        $data['vendors'] = User::with('vendor_details')->where('role', 'vendor')->get();
+
         #return response()->json($data);exit;
         return view('admin.contents.products-add', $data);
     }
@@ -57,7 +59,7 @@ class ProductsController extends Controller
         $validated = $request->validated();
 
         $newProduct = new Product();
-        $newProduct->user_id = auth()->user()->id;
+        $newProduct->user_id = $request->vendor;
         $newProduct->title = $validated['title'];
         $newProduct->description = $request->description;
 
@@ -69,9 +71,6 @@ class ProductsController extends Controller
         }
    
         $newProduct->regular_price = $validated['regular_price'];
-        $newProduct->sale_price = $request->sale_price;
-        $newProduct->stock_qty = $request->stock_qty;
-        $newProduct->stock_availability = $request->stock_availability_status;
 
         if($request->hasFile('image')){
             if($request->file('image')->isValid()){
@@ -138,6 +137,7 @@ class ProductsController extends Controller
         $data['tags'] = Tag::where('user_id', Auth::user()->id)->get();
         $data['categoriesHTML'] = Category::BuildTreeHTML2(Category::all()->toArray(), 0, ProductCategory::where('product_id', $id)->get());
         $data['product'] = Product::with(['categories', 'tags'])->where('id', $id)->first();
+        $data['vendors'] = User::with('vendor_details')->where('role', 'vendor')->get();
 
         #return response()->json($data);exit;
         return view('admin.contents.products-edit', $data);
@@ -155,6 +155,7 @@ class ProductsController extends Controller
         $validated = $request->validated();
 
         $product = Product::find($request->id);
+        $product->user_id = $request->vendor;
         $product->title = $validated['title'];
         $product->description = $request->description;
 
@@ -166,9 +167,6 @@ class ProductsController extends Controller
         }
    
         $product->regular_price = $validated['regular_price'];
-        $product->sale_price = $request->sale_price;
-        $product->stock_qty = $request->stock_qty;
-        $product->stock_availability = $request->stock_availability_status;
 
         if($request->hasFile('image')){
             if($request->file('image')->isValid()){

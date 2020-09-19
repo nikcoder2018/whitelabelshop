@@ -56,6 +56,10 @@ Route::group(['middleware' => 'auth'], function(){
         Route::post('locations/update', 'LocationsController@update')->name('locations.update');
         Route::post('locations/delete', 'LocationsController@destroy')->name('locations.destroy');
 
+        Route::resource('specialoffers', 'SpecialOffersController', ['except' => ['update', 'destroy']]);
+        Route::post('specialoffers/update', 'SpecialOffersController@update')->name('specialoffers.update');
+        Route::post('specialoffers/delete', 'SpecialOffersController@destroy')->name('specialoffers.destroy');
+
 
         Route::resource('attributes', 'AttributesController');
 

@@ -10,7 +10,7 @@ class Product extends Model
     protected $fillable = ['user_id', 'title', 'description', 'slug', 'regular_price', 'sale_price', 'stock_availability', 'image_url'];
 
     function vendor(){
-        return $this->belongsTo(User::class, 'user_id', 'id');
+        return $this->belongsTo(User::class, 'user_id', 'id')->with('vendor_details');
     }
 
     function categories(){

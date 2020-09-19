@@ -32,6 +32,12 @@
                 </ul>
             </li>
             <li>
+                <a href="{{route('products.index')}}" class="{{ Request::segment(2) === 'products' ? 'active' : null }}">
+                    <i class="fa fa-shopping-cart"></i>
+                    <span>Products</span>
+                </a>
+            </li>
+            <li>
                 <a href="{{route('posts.index')}}" class="{{ Request::segment(2) === 'posts' ? 'active' : null }}">
                     <i class="fa fa-thumb-tack"></i>
                     <span>Posts</span>

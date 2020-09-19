@@ -62,7 +62,7 @@
                 <td>
                     <span class="badge badge-primary">{{ucfirst($product->status)}}</span>
                 </td>
-                <td>{{$product->vendor->shop_name}}</td>
+                <td>{{$product->vendor->vendor_details->vendor_name}}</td>
                 <td>
                     <a href="#" class="btn btn-primary btn-sm btn-view"><i class="fa fa-eye"></i> View </a>
                     <a href="{{route('products.edit', $product->id)}}" class="btn btn-info btn-sm btn-edit"><i class="fa fa-pencil"></i> Edit </a>

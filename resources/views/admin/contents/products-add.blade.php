@@ -68,86 +68,16 @@
 
             <div class="card">
                 <div class="card-header">
-                    Options
+                    Pricing
                 </div>
                 <div class="card-body">
-                    <div class="tabbable tabs-left">
-                        <ul class="nav nav-tabs">
-                        <li class="nav-item general"><a class="nav-link active show" href="#tab_general" data-toggle="tab">General</a></li>
-                        <li class="nav-item inventory"><a class="nav-link" href="#tab_stock" data-toggle="tab">Inventory</a></li>
-                        {{-- <li class="nav-item attribute"><a class="nav-link" href="#tab_attribute" data-toggle="tab">Attributes</a></li> --}}
-                        </ul>
-                        <div class="tab-content">
-                        <div class="tab-general tab-pane fade active show" id="tab_general">  
-                            <div class="form-group mt-3">
-                                <div class="row">
-                                    <label class="col-sm-6 control-label" for="input-regular_price">Regular Price ($)</label>
-                                    <div class="col-sm-6">
-                                    <input type="number" placeholder="Regular Price" id="input-regular_price" name="regular_price" class="form-control" min="0" step="any" value="">
-                                    </div>
-                                </div>  
+                    <div class="form-group mt-3">
+                        <div class="row">
+                            <label class="col-sm-6 control-label" for="input-regular_price">Regular Price ($)</label>
+                            <div class="col-sm-6">
+                            <input type="number" placeholder="Regular Price" id="input-regular_price" name="regular_price" class="form-control" min="0" step="any" value="">
                             </div>
-                            <div class="form-group">
-                                <div class="row">
-                                    <label class="col-sm-6 control-label" for="input-sale_price">Sale Price ($)</label>
-                                    <div class="col-sm-6">
-                                        <input type="number" placeholder="Sale Price" id="input-sale_price" name="sale_price" class="form-control" min="0" step="any" value=""> 
-                                    </div>
-                                </div>  
-                            </div>
-                        </div>
-                        
-                        <div class="tab-stock tab-pane fade" id="tab_stock">
-                            <div class="form-group mt-3">
-                                <div class="row">
-                                    <label class="col-sm-6 control-label">Manage Stock</label>
-                                    <div class="col-sm-6">
-                                    <label class="">
-                                        <input type="checkbox" class="enable-stock-switch"/> &nbsp; Enable stock management for product
-                                    </label>                                             
-                                    </div>
-                                </div>    
-                            </div>
-                            <div class="form-group stock-qty" style="display: none;">
-                                <div class="row">  
-                                    <label class="col-sm-6 control-label" for="input-stock_qty">Stock Qty</label>
-                                    <div class="col-sm-6">
-                                        <input type="number" min="0" placeholder="Stock Qty" id="input-stock_qty" name="stock_qty" class="form-control" value="0">
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="form-group">
-                                <div class="row">  
-                                    <label class="col-sm-6 control-label" for="input-stock_availability_status">Stock Availability</label>
-                                    <div class="col-sm-6">
-                                    <select id="input-stock_availability_status" name="stock_availability_status" class="form-control select2 select2-hidden-accessible" style="width: 100%;" tabindex="-1" aria-hidden="true">
-                                        <option selected="selected" value="in_stock">In Stock</option>
-                                        <option value="out_of_stock">Out of Stock</option>                  
-                                    </select>
-                                    
-                                    </div>
-                                </div>  
-                            </div>
-                        </div>
-                                                                                                            
-                        {{-- <div class="tab-advanced tab-pane fade" id="tab_attribute">
-                            <div class="form-group mt-3">
-                                <div class="row">
-                                    <div class="col-sm-4">
-                                        <input type="text" class="form-control" name="attrNameByProduct" id="attrNameByProduct" placeholder="name example - size or colors or quantity">
-                                    </div>
-                                    <div class="col-sm-5">
-                                        <input type="text" class="form-control" name="attrValuesByProduct" id="attrValuesByProduct" placeholder="attribute values example - small,medium,large">
-                                        <span>Enter attribute values by comma separator</span>
-                                    </div>
-                                    <div class="col-sm-3">
-                                        <a class="btn btn-default btn-sm add-new-attribute" href="">Add Attribute</a>
-                                    </div>
-                                </div>    
-                            </div>
-                        </div>   --}}
-                        
-                        </div>
+                        </div>  
                     </div>
                 </div>
             </div>
@@ -187,6 +117,23 @@
                         </div>
                     </div>
                     
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-header">
+                    Vendor
+                </div>
+                <div class="card-body">
+                    @if(count($vendors) > 0)
+                    <select name="vendor" class="form-control">
+                        @foreach($vendors as $vendor)
+                        <option value="{{$vendor->id}}">{{$vendor->vendor_details->vendor_name}}</option>
+                        @endforeach
+                    </select>
+                    @else 
+                    <p>No vendors registered</p>
+                    @endif
                 </div>
             </div>
 
