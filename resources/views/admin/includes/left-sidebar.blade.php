@@ -61,6 +61,12 @@
                     <span>Tags</span>
                 </a>
             </li>
+            <li>
+                <a href="{{route('specialoffers.index')}}" class="{{ Request::segment(2) === 'tags' ? 'active' : null }}" >
+                    <i class="fa fa-gift"></i>
+                    <span>Special Offers</span>
+                </a>
+            </li>
             <li class="sub-menu">
                 <a href="javascript:;" class="{{ Request::segment(2) === 'setting' ? 'active' : null }}">
                     <i class="fa fa-cogs"></i>
