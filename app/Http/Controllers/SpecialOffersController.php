@@ -9,6 +9,7 @@ use Illuminate\Support\Str;
 use Illuminate\Http\UploadedFile;
 
 use App\Http\Requests\StoreSpecialOfferRequest;
+use App\Http\Requests\UpdateSpecialOfferRequest;
 use App\SpecialOffer;
 use Carbon\Carbon;
 class SpecialOffersController extends Controller
@@ -21,7 +22,6 @@ class SpecialOffersController extends Controller
     public function index()
     {
         $data['special_offers'] = SpecialOffer::with('user')->get();
-
         return view('admin.contents.special-offers', $data);
     }
 
@@ -49,8 +49,10 @@ class SpecialOffersController extends Controller
         $offer->user_id = auth()->user()->id;
         $offer->title = $validated['title'];
         $offer->description = $validated['description'];
-        $offer->time_start = Carbon::create($request->date_start, $request->time_start);
-        $offer->time_end = Carbon::create($request->date_end, $request->time_end);
+        $offer->date_start = date('Y-m-d', strtotime($request->date_start));
+        $offer->date_end = date('Y-m-d', strtotime($request->date_start));
+        $offer->time_start = date('h:i:s', strtotime($request->time_start));
+        $offer->time_end = date('h:i:s', strtotime($request->time_end));
         $offer->price = $validated['price'];
         $offer->status = 'active';
 
@@ -105,17 +107,18 @@ class SpecialOffersController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(UpdateSpecialRequest $request)
+    public function update(UpdateSpecialOfferRequest $request)
     {
         $validated = $request->validated();
 
         $offer = SpecialOffer::find($request->id);
         $offer->title = $validated['title'];
         $offer->description = $validated['description'];
-        $offer->time_start = $request->time_start;
-        $offer->time_end = $request->time_end;
+        $offer->date_start = date('Y-m-d', strtotime($request->date_start));
+        $offer->date_end = date('Y-m-d', strtotime($request->date_start));
+        $offer->time_start = date('h:i:s', strtotime($request->time_start));
+        $offer->time_end = date('h:i:s', strtotime($request->time_end));
         $offer->price = $validated['price'];
-        $offer->status = 'active';
 
         if($request->hasFile('image')){
             if($request->file('image')->isValid()){
@@ -155,5 +158,12 @@ class SpecialOffersController extends Controller
         }else{
             return response()->json(array('success' => false, 'msg' => 'We cant delete this Offer, please try again!'));
         }
+    }
+
+    public function getOfferDataJSON(Request $request){
+        $soffer = SpecialOffer::where('id',$request->id)->first();
+        $soffer->time_start = date('h:i A', strtotime($soffer->time_start));
+        $soffer->time_end = date('h:i A', strtotime($soffer->time_end));
+        return response()->json($soffer);
     }
 }

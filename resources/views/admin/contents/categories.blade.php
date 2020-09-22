@@ -182,6 +182,20 @@
                     }
                 });
             });
+            $('#form-add-category').on('change keypress keyup', 'input[name=name]', async function(){
+                const slug = await $.ajax({
+                    url: "{{route('slugify')}}",
+                    type: "POST",
+                    data: {
+                        _token: $('meta[name="csrf-token"]').attr('content'),
+                        text: $(this).val()
+                    }
+                });
+
+                if(slug){
+                    $('#form-add-category').find('input[name=slug]').val(slug);
+                }
+            });
             $('#form-edit-category').on('submit', function(e){
                 e.preventDefault();
                 $.ajax({
@@ -206,6 +220,20 @@
                     }
                 });
             });
+            $('#form-edit-category').on('change keypress keyup', 'input[name=name]', async function(){
+                const slug = await $.ajax({
+                    url: "{{route('slugify')}}",
+                    type: "POST",
+                    data: {
+                        _token: $('meta[name="csrf-token"]').attr('content'),
+                        text: $(this).val()
+                    }
+                });
+
+                if(slug){
+                    $('#form-edit-category').find('input[name=slug]').val(slug);
+                }
+            });
             $('#FlatTree3').on('click', '.edit-category', async function(e){
                 e.stopPropagation();
                 let category_id = $(this).data('id');
@@ -228,7 +256,11 @@
                 form_edit.find('input[name=slug]').val(category.slug);
                 form_edit.find('textarea[name=description]').val(category.description);
                 form_edit.find('select[name=icon]').val(category.icon);
-                form_edit.find('.thumbnail-image').attr('src', category.image);
+                if(category.image != '' && category.image != null){
+                    form_edit.find('.thumbnail-image').attr('src', category.image);
+                }else{
+                    form_edit.find('.thumbnail-image').attr('src', 'http://www.placehold.it/300x250/EFEFEF/AAAAAA&amp;text=no+image');
+                }
                 form_edit.find('select[name=parent]').val(category.parent);
                 
             });

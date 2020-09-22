@@ -27,10 +27,11 @@ class UpdateVendorRequest extends FormRequest
             'id' => 'required',
             'shop_name' => 'required|max:64',
             'email' => 'required|email|unique:users,email,'.$this->id,
-            'vat' => 'required',
+            'vat' => 'required|max:9',
             'contactpersonnumber' => 'required',
             'firstname' => 'required|max:64',
             'lastname' => 'required|max:64',
+            'password' => 'confirmed'
         ];
     }
 }

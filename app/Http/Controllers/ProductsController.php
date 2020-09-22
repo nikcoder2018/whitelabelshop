@@ -61,6 +61,7 @@ class ProductsController extends Controller
         $newProduct = new Product();
         $newProduct->user_id = $request->vendor;
         $newProduct->title = $validated['title'];
+        $newProduct->slug = $request->slug;
         $newProduct->description = $request->description;
 
         $slug = $this->slugify($validated['title']);
@@ -157,15 +158,9 @@ class ProductsController extends Controller
         $product = Product::find($request->id);
         $product->user_id = $request->vendor;
         $product->title = $validated['title'];
+        $product->slug = $validated['slug'];
         $product->description = $request->description;
 
-        $slug = $this->slugify($validated['title']);
-        if(!Product::where('slug', $slug)->exists()){
-            $product->slug = $slug;
-        }else{
-            $product->slug = $slug.'_'.time();
-        }
-   
         $product->regular_price = $validated['regular_price'];
 
         if($request->hasFile('image')){
@@ -240,33 +235,6 @@ class ProductsController extends Controller
         }else{
             return response()->json(array('success' => false, 'msg' => 'We cant delete this Product, please try again!'));
         }
-    }
-
-    public static function slugify($text)
-    {
-      // replace non letter or digits by -
-      $text = preg_replace('~[^\pL\d]+~u', '-', $text);
-    
-      // transliterate
-      $text = iconv('utf-8', 'us-ascii//TRANSLIT', $text);
-    
-      // remove unwanted characters
-      $text = preg_replace('~[^-\w]+~', '', $text);
-    
-      // trim
-      $text = trim($text, '-');
-    
-      // remove duplicate -
-      $text = preg_replace('~-+~', '-', $text);
-    
-      // lowercase
-      $text = strtolower($text);
-    
-      if (empty($text)) {
-        return 'n-a';
-      }
-    
-      return $text;
     }
 
 }

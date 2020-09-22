@@ -153,37 +153,70 @@
                 processData:false,
                 success: function(resp){
                     if(resp.success){
-                        $('.tags-container').append(`<button type="button" data-id="${resp.details.id}" class="btn btn-round btn-primary btn-tag">${resp.details.tag}</button>`);
-                        form.reset();
+                        swal(resp.msg, {
+                            icon: "success",
+                        }).then(()=>{
+                            $('.tags-container').append(`<button type="button" data-id="${resp.details.id}" class="btn btn-round btn-primary btn-tag">${resp.details.tag}</button>`);
+                            form.reset();
+                        });
+                        
                     }
                 }
             });
         });
-
-        $('#form-edit-tag').on('submit', function(e){
-                let form = this;
-
-                e.preventDefault();
-                $.ajax({
-                    url: $(this).attr('action'),
-                    type: 'POST',
-                    data:  new FormData(this),
-                    contentType: false,
-                    cache: false,
-                    processData:false,
-                    success: function(resp){
-                        if(resp.success){
-                            swal(resp.msg, {
-                                icon: "success",
-                            }).then(()=>{
-                                location.reload();
-                            });
-                            
-                        }
-                    }
-                });
+        $('#form-add-tag').on('change keypress keyup', 'input[name=tag]', async function(){
+            const slug = await $.ajax({
+                url: "{{route('slugify')}}",
+                type: "POST",
+                data: {
+                    _token: $('meta[name="csrf-token"]').attr('content'),
+                    text: $(this).val()
+                }
             });
 
+            if(slug){
+                $('#form-add-tag').find('input[name=slug]').val(slug);
+            }
+        });
+        $('#form-edit-tag').on('submit', function(e){
+            let form = this;
+
+            e.preventDefault();
+            $.ajax({
+                url: $(this).attr('action'),
+                type: 'POST',
+                data:  new FormData(this),
+                contentType: false,
+                cache: false,
+                processData:false,
+                success: function(resp){
+                    if(resp.success){
+                        swal(resp.msg, {
+                            icon: "success",
+                        }).then(()=>{
+                            location.reload();
+                        });
+                        
+                    }
+                }
+            });
+        });
+        $('#form-edit-tag').on('change keypress keyup', 'input[name=tag]', async function(){
+            const slug = await $.ajax({
+                url: "{{route('slugify')}}",
+                type: "POST",
+                data: {
+                    _token: $('meta[name="csrf-token"]').attr('content'),
+                    text: $(this).val()
+                }
+            });
+
+            if(slug){
+                $('#form-edit-tag').find('input[name=slug]').val(slug);
+            }
+        });
+        
+        
         $('.btn-tag').on('click',async function(){
             let tag_id = $(this).data('id');
             let card_add = $('#card-add-tag');

@@ -68,10 +68,39 @@ Route::group(['middleware' => 'auth'], function(){
             Route::get('all_categories', 'CategoriesController@getCategoriesJSON')->name('json.getcategories');
             Route::post('get_category', 'CategoriesController@getCategoryDataJSON')->name('json.getcategorydata');
             Route::post('get_vendor', 'VendorsController@getVendorDataJSON')->name('json.getvendordata');
+            Route::post('get_admin', 'AdminsController@getAdminDataJSON')->name('json.getadmindata');
             Route::post('get_page', 'PagesController@getPageDataJSON')->name('json.getpagedata');
             Route::post('get_post', 'PostsController@getPostDataJSON')->name('json.getpostdata');
             Route::post('get_tag', 'TagsController@getTagDataJSON')->name('json.gettagdata');
             Route::post('get_location', 'LocationsController@getLocationDataJSON')->name('json.getlocationdata');
+            Route::post('get_specialoffer', 'SpecialOffersController@getOfferDataJSON')->name('json.getspecialofferdata');
         });
     });
 });
+
+Route::post('slugify', function(){
+    $text = request()->input('text');
+    // replace non letter or digits by -
+    $text = preg_replace('~[^\pL\d]+~u', '-', $text);
+        
+    // transliterate
+    $text = iconv('utf-8', 'us-ascii//TRANSLIT', $text);
+
+    // remove unwanted characters
+    $text = preg_replace('~[^-\w]+~', '', $text);
+
+    // trim
+    $text = trim($text, '-');
+
+    // remove duplicate -
+    $text = preg_replace('~-+~', '-', $text);
+
+    // lowercase
+    $text = strtolower($text);
+
+    if (empty($text)) {
+        $text = 'n-a';
+    }
+
+    return $text;
+})->name('slugify');

@@ -60,6 +60,15 @@
 
             <div class="card">
                 <div class="card-header">
+                    Slug
+                </div>
+                <div class="card-body">
+                    <input type="text" name="slug" id="input-slug" class="form-control" placeholder="E.g. blue-jeans" value="{{$product->slug}}">
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-header">
                     Description
                 </div>
                 <div class="card-body">
@@ -245,6 +254,7 @@
                 },
                 error: function(resp){
                     let form = $('.form-edit-product');
+                    console.log(form);
                     $.each(resp.responseJSON.errors, function(name, error){
                         form.find('#input-'+name).siblings('.invalid-feedback').remove();
                         form.find('#input-'+name).siblings('.valid-feedback').remove();
@@ -259,8 +269,22 @@
                 }
             });
         });
+        
+        $('.form-edit-product').on('change keypress keyup', 'input[name=title]', async function(){
+            const slug = await $.ajax({
+                url: "{{route('slugify')}}",
+                type: "POST",
+                data: {
+                    _token: $('meta[name="csrf-token"]').attr('content'),
+                    text: $(this).val()
+                }
+            });
 
-        $('.form-add-product').on('change, keypress', 'input', function(){
+            if(slug){
+                $('.form-edit-product').find('input[name=slug]').val(slug);
+            }
+        });
+        $('.form-edit-product').on('change, keypress', 'input', function(){
             $(this).removeClass("is-invalid is-valid");
             $(this).siblings('.invalid-feedback').remove();
             $(this).siblings('.valid-feedback').remove();

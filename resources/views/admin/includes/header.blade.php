@@ -4,7 +4,7 @@
         <i class="fa fa-bars"></i>
     </div>
   <!--logo start-->
-  <a href="{{route('dashboard')}}" class="logo">Noname<span>Shop</span></a>
+  <a href="{{route('dashboard')}}" class="logo"><img src="{{asset('img/capcap-rs-logo.jpeg')}}" width="100" alt=""></a>
   <!--logo end-->
 
   <div class="top-nav ">

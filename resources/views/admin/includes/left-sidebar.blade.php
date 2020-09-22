@@ -62,7 +62,7 @@
                 </a>
             </li>
             <li>
-                <a href="{{route('specialoffers.index')}}" class="{{ Request::segment(2) === 'tags' ? 'active' : null }}" >
+                <a href="{{route('specialoffers.index')}}" class="{{ Request::segment(2) === 'specialoffers' ? 'active' : null }}" >
                     <i class="fa fa-gift"></i>
                     <span>Special Offers</span>
                 </a>

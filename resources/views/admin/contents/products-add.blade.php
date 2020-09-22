@@ -55,6 +55,15 @@
                 <div class="card-body">
                     <input type="text" name="title" id="input-title" class="form-control round-input" placeholder="E.g. Blue Jeans">
                 </div>
+            </div>  
+
+            <div class="card">
+                <div class="card-header">
+                    Slug
+                </div>
+                <div class="card-body">
+                    <input type="text" name="slug" id="input-title" class="form-control" placeholder="E.g. blue-jeans">
+                </div>
             </div>
 
             <div class="card">
@@ -247,7 +256,21 @@
             });
         });
 
-        $('.form-add-product').on('change, keypress', 'input', function(){
+        $('.form-add-product').on('change keypress keyup', 'input[name=title]', async function(){
+            const slug = await $.ajax({
+                url: "{{route('slugify')}}",
+                type: "POST",
+                data: {
+                    _token: $('meta[name="csrf-token"]').attr('content'),
+                    text: $(this).val()
+                }
+            });
+
+            if(slug){
+                $('.form-add-product').find('input[name=slug]').val(slug);
+            }
+        });
+        $('.form-add-product').on('change keypress', 'input', function(){
             $(this).removeClass("is-invalid is-valid");
             $(this).siblings('.invalid-feedback').remove();
             $(this).siblings('.valid-feedback').remove();

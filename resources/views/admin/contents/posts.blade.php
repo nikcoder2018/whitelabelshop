@@ -285,6 +285,21 @@
             $(this).siblings('.valid-feedback').remove();
         });
 
+        $('#form-add-post').on('change keypress keyup', 'input[name=title]', async function(){
+            const slug = await $.ajax({
+                url: "{{route('slugify')}}",
+                type: "POST",
+                data: {
+                    _token: $('meta[name="csrf-token"]').attr('content'),
+                    text: $(this).val()
+                }
+            });
+
+            if(slug){
+                $('#form-add-post').find('input[name=slug]').val(slug);
+            }
+        });
+
         $('.btn-edit').on('click', async function(){
             let form = $('#form-edit-post');
             let modal = $('#modal-edit');
@@ -310,7 +325,9 @@
             form.find('input[name=id]').val(post.id);
             form.find('input[name=title]').val(post.title);
             form.find('input[name=slug]').val(post.slug);
-            form.find('.thumbnail-image').attr('src', post.thumbnail);
+            if(post.thumbnail != '' && post.thumbnail != null){
+                form.find('.thumbnail-image').attr('src', post.thumbnail);
+            }
             form.find('.content-editor').summernote('code',post.content);
         });
 
@@ -367,6 +384,21 @@
                     });
                 }
             });
+        });
+
+        $('#form-edit-post').on('change keypress keyup', 'input[name=title]', async function(){
+            const slug = await $.ajax({
+                url: "{{route('slugify')}}",
+                type: "POST",
+                data: {
+                    _token: $('meta[name="csrf-token"]').attr('content'),
+                    text: $(this).val()
+                }
+            });
+
+            if(slug){
+                $('#form-edit-post').find('input[name=slug]').val(slug);
+            }
         });
 
         $('.btn-delete').on('click', function(){

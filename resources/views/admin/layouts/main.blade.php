@@ -9,7 +9,7 @@
 
     <link rel="shortcut icon" href="img/favicon.png">
 
-    <title>{{env('APP_TITLE', 'nonameshop')}}</title>
+    <title>CapCap.rs | Admin</title>
 
     <!-- Bootstrap core CSS -->
     <link href="{{asset('css/bootstrap.min.css')}}" rel="stylesheet">

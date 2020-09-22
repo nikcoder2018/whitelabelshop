@@ -122,7 +122,7 @@
                     <div class="form-row">
                         <div class="col-md-6 mb-3">
                             <label for="input-contactperson">*VAT (PDV)</label>
-                            <input type="text" name="vat" class="form-control" id="input-vat" placeholder="VAT">
+                            <input type="number" name="vat" class="form-control" id="input-vat" placeholder="VAT" maxlength="9">
                         </div>
                         <div class="col-md-6 mb-3">
                             <label for="input-subscription">Subscription Plan</label>
@@ -217,7 +217,7 @@
                     <div class="form-row">
                         <div class="col-md-6 mb-3">
                             <label for="input-contactperson">*VAT (PDV)</label>
-                            <input type="text" name="vat" class="form-control" id="input-vat" placeholder="VAT">
+                            <input type="number" name="vat" class="form-control" id="input-vat" placeholder="VAT" maxlength="9">
                         </div>
                         <div class="col-md-6 mb-3">
                             <label for="input-subscription">Subscription Plan</label>

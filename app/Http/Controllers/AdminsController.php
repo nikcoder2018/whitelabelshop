@@ -3,6 +3,9 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Hash;
+use App\Http\Requests\StoreAdminRequest;
+use App\Http\Requests\UpdateAdminRequest;
 use App\User;
 
 class AdminsController extends Controller
@@ -35,9 +38,23 @@ class AdminsController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
+    public function store(StoreAdminRequest $request)
     {
-        //
+        $validated = $request->validated();
+
+        $admin = new User();
+        $admin->email = $validated['email'];
+        $admin->firstname = $validated['firstname'];
+        $admin->lastname = $validated['lastname'];
+        $admin->password = Hash::make($validated['password']);
+        $admin->role = 'admin';
+        $admin->save();
+
+        if($admin){
+            return response()->json(array('success' => true, 'msg' => 'New admin created!'));
+        }else{
+            return response()->json(array('success' => false, 'msg' => 'Something went wrong on the system, Please try again!'));
+        }
     }
 
     /**
@@ -57,9 +74,9 @@ class AdminsController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function edit($id)
+    public function edit(Request $id)
     {
-        //
+        
     }
 
     /**
@@ -69,9 +86,24 @@ class AdminsController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $id)
+    public function update(UpdateAdminRequest $request)
     {
-        //
+        $validated = $request->validated();
+        $admin = User::find($request->id);
+        $admin->email = $validated['email'];
+        $admin->firstname = $validated['firstname'];
+        $admin->lastname = $validated['lastname'];
+
+        if($request->password)
+        $admin->password = Hash::make($request->password);
+        $admin->save();
+
+        if($admin){
+
+            return response()->json(array('success' => true, 'msg' => 'Admin updated!'));
+        }else{
+            return response()->json(array('success' => false, 'msg' => 'Something went wrong on the system, Please try again!'));
+        }
     }
 
     /**
@@ -80,8 +112,20 @@ class AdminsController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function destroy($id)
+    public function destroy(Request $request)
     {
-        //
+        $admin = User::where('id', $request->id);
+        $admin->delete();
+
+        if($admin){
+            return response()->json(array('success' => true, 'msg' => 'Admin has been deleted!'));
+        }else{
+            return response()->json(array('success' => false, 'msg' => 'We cant delete this Admin, please try again!'));
+        }
+    }
+
+    public function getAdminDataJSON(Request $request){
+        $admin = User::find($request->id);
+        return response()->json($admin);
     }
 }

@@ -25,7 +25,7 @@ class StorePageRequest extends FormRequest
     {
         return [
             'title' => 'required|max:255',
-            'slug' => 'required|unique:pages'
+            'slug' => 'required|unique:pages,slug,'.$this->id
         ];
     }
 }
