@@ -15,6 +15,7 @@ use App\ProductCategory;
 use App\Category;
 use App\Tag;
 use App\User;
+use App\Vendor;
 use Auth;
 
 class ProductsController extends Controller
@@ -42,7 +43,7 @@ class ProductsController extends Controller
         $data['categories'] = Category::all();
         $data['tags'] = Tag::all();
         $data['categoriesHTML'] = Category::BuildTreeHTML2(Category::all()->toArray());
-        $data['vendors'] = User::with('vendor_details')->where('role', 'vendor')->get();
+        $data['vendors'] = Vendor::all();
 
         #return response()->json($data);exit;
         return view('admin.contents.products-add', $data);
@@ -237,4 +238,29 @@ class ProductsController extends Controller
         }
     }
 
+    public function slugify($text){
+        // replace non letter or digits by -
+        $text = preg_replace('~[^\pL\d]+~u', '-', $text);
+            
+        // transliterate
+        $text = iconv('utf-8', 'us-ascii//TRANSLIT', $text);
+    
+        // remove unwanted characters
+        $text = preg_replace('~[^-\w]+~', '', $text);
+    
+        // trim
+        $text = trim($text, '-');
+    
+        // remove duplicate -
+        $text = preg_replace('~-+~', '-', $text);
+    
+        // lowercase
+        $text = strtolower($text);
+    
+        if (empty($text)) {
+            $text = 'n-a';
+        }
+    
+        return $text;
+    }
 }

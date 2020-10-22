@@ -137,7 +137,7 @@
                     @if(count($vendors) > 0)
                     <select name="vendor" class="form-control">
                         @foreach($vendors as $vendor)
-                        <option value="{{$vendor->id}}">{{$vendor->vendor_details->vendor_name}}</option>
+                        <option value="{{$vendor->id}}">{{$vendor->vendor_name}}</option>
                         @endforeach
                     </select>
                     @else 

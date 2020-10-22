@@ -15,7 +15,7 @@
             </div>
             <div class="value">
                 <h1 class="count">
-                    0
+                    {{$total_vendors}}
                 </h1>
                 <p>Vendors</p>
             </div>
@@ -28,7 +28,7 @@
             </div>
             <div class="value">
                 <h1 class=" count2">
-                    0
+                    {{$total_products}}
                 </h1>
                 <p>Products</p>
             </div>
@@ -41,7 +41,7 @@
             </div>
             <div class="value">
                 <h1 class=" count3">
-                    0
+                    {{$total_enquiries}}
                 </h1>
                 <p>Enquiries</p>
             </div>
@@ -54,7 +54,7 @@
             </div>
             <div class="value">
                 <h1 class=" count4">
-                    0
+                    {{$total_traffics}}
                 </h1>
                 <p>Traffics</p>
             </div>
