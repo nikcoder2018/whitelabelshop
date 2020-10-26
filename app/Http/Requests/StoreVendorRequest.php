@@ -25,13 +25,14 @@ class StoreVendorRequest extends FormRequest
     {
         return [
             'shop_name' => 'required|max:64',
-            'email' => 'required|email|unique:users,email,'.$this->id,
+            'email' => 'required|email|unique:vendors,email,'.$this->id,
             'vat' => 'required|max:9',
-            'contactpersonnumber' => 'required',
+            'vat_sec' => 'required|max:9',
+            'country' => 'required',
+            'city' => 'required',
             'firstname' => 'required|max:64',
             'lastname' => 'required|max:64',
-            'password' => 'required|confirmed',
-            'password_confirmation' => 'required'
+            'password' => 'confirmed'
         ];
     }
 }

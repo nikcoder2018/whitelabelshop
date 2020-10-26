@@ -50,10 +50,14 @@ Route::group(['middleware' => 'auth'], function(){
     Route::post('categories/update', 'CategoriesController@update')->name('categories.update');
     Route::post('categories/delete', 'CategoriesController@destroy')->name('categories.destroy');
 
-    Route::resource('locations', 'LocationsController', ['except' => ['update', 'destroy']]);
+    Route::resource('locations', 'LocationsController', ['except' => ['update', 'destroy','show']]);
     Route::post('locations/update', 'LocationsController@update')->name('locations.update');
     Route::post('locations/delete', 'LocationsController@destroy')->name('locations.destroy');
-
+    Route::get('locations/import', 'LocationsController@importView')->name('locations.import');
+    Route::post('locations/import', 'LocationsController@import')->name('locations.import');
+    Route::get('locations/countries', 'LocationsController@countries')->name('locations.countries');
+    Route::get('locations/cities', 'LocationsController@cities')->name('locations.cities');
+    
     Route::resource('specialoffers', 'SpecialOffersController', ['except' => ['update', 'destroy']]);
     Route::post('specialoffers/update', 'SpecialOffersController@update')->name('specialoffers.update');
     Route::post('specialoffers/delete', 'SpecialOffersController@destroy')->name('specialoffers.destroy');

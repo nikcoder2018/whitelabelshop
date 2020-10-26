@@ -1,5 +1,19 @@
 @extends('admin.layouts.main')
 
+@section('external_css')
+<link rel="stylesheet" type="text/css" href="{{asset('assets/select2/css/select2.min.css')}}"/>
+@endsection
+@section('stylesheets')
+<style>
+    .ui-widget-content{
+        border-radius: 0 !important;
+        border: 1px solid #dddddd !important; 
+        background: #ffffff !important;
+        color: #333333 !important;
+        z-index: 9999 !important;
+    }
+</style>
+@endsection
 @section('content')
 <!-- page start-->
 <section class="card">
@@ -16,7 +30,6 @@
                     <table class="table table-hover p-table">
                         <thead>
                         <tr>
-                            <th>Full Name</th>
                             <th>Shop</th>
                             <th>Email</th>
                             <th>Status</th>
@@ -27,11 +40,10 @@
                             @foreach($vendors as $vendor)
                                 <tr>
                                     <td class="p-name">
-                                        <a href="#">{{$vendor->firstname}} {{$vendor->lastname}}</a>
+                                        <a href="#">{{$vendor->vendor_name}}</a>
                                         <br>
                                         <small>Registered {{date('m.d.Y',strtotime($vendor->created_at))}}</small>
                                     </td>
-                                    <td>{{@$vendor->vendor_details->vendor_name}}</td>
                                     <td>{{$vendor->email}}</td>
                                     <td>
                                         <span class="badge badge-primary">{{ucfirst($vendor->status)}}</span>
@@ -57,7 +69,7 @@
 
 @section('modals')
 <!-- Modal -->
-<div class="modal fade " id="modal-add" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+<div class="modal fade " id="modal-add" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-lg" role="document">
         <div class="modal-content">
             <div class="modal-header">
@@ -72,59 +84,63 @@
                     <div class="form-row">
                         <div class="col-md-6 mb-3">
                             <label for="input-shop">*Restaurant name (Naziv restorana)</label>
-                            <input type="text" name="shop_name" class="form-control" id="input-shop_name" placeholder="Enter shopname">
+                            <input type="text" name="shop_name" class="form-control input-shop_name" placeholder="Enter shopname">
                         </div>
                         <div class="col-md-6 mb-3">
                             <label for="input-email">*Email address</label>
-                            <input type="email" name="email" class="form-control" id="input-email" placeholder="Enter email">
+                            <input type="email" name="email" class="form-control input-email" placeholder="Enter email">
                         </div>
                     </div>
                     <div class="form-row">
                         <div class="col-md-6 mb-3">
                             <label for="input-fname">First name</label>
-                            <input type="text" name="firstname" class="form-control" id="input-firstname" placeholder="Enter firstname">
+                            <input type="text" name="firstname" class="form-control input-firstname" placeholder="Enter firstname">
                         </div>
                         <div class="col-md-6 mb-3">
                             <label for="input-lname">Last name</label>
-                            <input type="text" name="lastname" class="form-control" id="input-lastname" placeholder="Enter lastname">
+                            <input type="text" name="lastname" class="form-control input-lastname" placeholder="Enter lastname">
                         </div>
                     </div> 
                     <div class="form-row">
                         <div class="col-md-12 mb-3">
                             <label for="input-address">Address (Adresa)</label>
-                            <input type="text" name="address" class="form-control" id="input-address" placeholder="Address">
+                            <input type="text" name="address" class="form-control input-address" placeholder="Address">
                         </div>
                     </div>
                     <div class="form-row">
                         <div class="col-md-4 mb-3">
-                            <label for="input-region">Region(Region)</label>
-                            <input type="text" name="region" class="form-control" id="input-region" placeholder="Region">
+                            <label for="input-country">Country</label>
+                            <select name="country" class="input-country"></select>
                         </div>
                         <div class="col-md-4 mb-3">
                             <label for="input-city">City(Grad)</label>
-                            <input type="text" name="city" class="form-control" id="input-city" placeholder="City">
+                            <select name="city" class="input-city"></select>
                         </div>
                         <div class="col-md-4 mb-3">
                             <label for="input-phone">Phone number</label>
-                            <input type="text" name="phone" class="form-control" id="input-phone" placeholder="Phone number">
+                            <input type="text" name="phone" class="form-control input-phone" placeholder="Phone number">
                         </div>
                     </div>
                     <div class="form-row">
                         <div class="col-md-6 mb-3">
                             <label for="input-contactperson">Name of contact persone (Ime kontakt osobe) </label>
-                            <input type="text" name="contactperson" class="form-control" id="input-contactperson" placeholder="Contact Person">
+                            <input type="text" name="contactperson" class="form-control input-contactperson" placeholder="Contact Person">
                         </div>
                         <div class="col-md-6 mb-3">
                             <label for="input-contactpersonnumber">*Phone of contact persone (Telefon kontakt osobe)</label>
-                            <input type="text" name="contactpersonnumber" class="form-control" id="input-contactpersonnumber" placeholder="Contact Person Phone Number">
+                            <input type="text" name="contactpersonnumber" class="form-control input-contactpersonnumber" placeholder="Contact Person Phone Number">
                         </div>
                     </div>
                     <div class="form-row">
-                        <div class="col-md-6 mb-3">
-                            <label for="input-contactperson">*VAT (PDV)</label>
-                            <input type="number" name="vat" class="form-control" id="input-vat" placeholder="VAT" maxlength="9">
+                        <div class="col-md-4 mb-3">
+                            <label for="input-contactperson">*PIB (number unique)</label>
+                            <input type="number" name="vat" class="form-control input-vat" placeholder="VAT" maxlength="9">
                         </div>
-                        <div class="col-md-6 mb-3">
+                        <div class="col-md-4 mb-3">
+                            <label for="input-contactperson">*Matični broj (number unique)</label>
+                            <input type="number" name="vat_sec" class="form-control input-vat" placeholder="VAT" maxlength="9">
+                        </div>
+                        <div class="col-md-4 mb-3">
                             <label for="input-subscription">Subscription Plan</label>
                             <select name="subscription" class="form-control">
                                 <option value="basic">Basic Plan</option>
@@ -135,11 +151,11 @@
                     <div class="form-row">
                         <div class="col-md-6 mb-3">
                             <label for="input-password">Password</label>
-                            <input type="password" name="password" class="form-control" id="input-password" placeholder="Password">
+                            <input type="password" name="password" class="form-control input-password" placeholder="Password">
                         </div>
                         <div class="col-md-6 mb-3">
                             <label for="input-cpassword">Confirm Password</label>
-                            <input type="password" name="password_confirmation" class="form-control" id="input-password_confirmation" placeholder="Confirm Password">
+                            <input type="password" name="password_confirmation" class="form-control input-password_confirmation" placeholder="Confirm Password">
                         </div>
                     </div>
                 </div>
@@ -151,7 +167,7 @@
         </div>
     </div>
 </div>
-<div class="modal fade " id="modal-edit" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+<div class="modal fade " id="modal-edit" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-lg" role="document">
         <div class="modal-content">
             <div class="modal-header">
@@ -167,57 +183,57 @@
                     <div class="form-row">
                         <div class="col-md-6 mb-3">
                             <label for="input-shop">*Restaurant name (Naziv restorana)</label>
-                            <input type="text" name="shop_name" class="form-control" id="input-shop_name" placeholder="Enter shopname">
+                            <input type="text" name="shop_name" class="form-control input-shop_name" placeholder="Enter shopname">
                         </div>
                         <div class="col-md-6 mb-3">
                             <label for="input-email">*Email address</label>
-                            <input type="email" name="email" class="form-control" id="input-email" placeholder="Enter email">
+                            <input type="email" name="email" class="form-control input-email" placeholder="Enter email">
                         </div>
                     </div>
                     <div class="form-row">
                         <div class="col-md-6 mb-3">
                             <label for="input-fname">First name</label>
-                            <input type="text" name="firstname" class="form-control" id="input-firstname" placeholder="Enter firstname">
+                            <input type="text" name="firstname" class="form-control input-firstname" placeholder="Enter firstname">
                         </div>
                         <div class="col-md-6 mb-3">
                             <label for="input-lname">Last name</label>
-                            <input type="text" name="lastname" class="form-control" id="input-lastname" placeholder="Enter lastname">
+                            <input type="text" name="lastname" class="form-control input-lastname" placeholder="Enter lastname">
                         </div>
                     </div> 
                     <div class="form-row">
                         <div class="col-md-12 mb-3">
                             <label for="input-address">Address (Adresa)</label>
-                            <input type="text" name="address" class="form-control" id="input-address" placeholder="Address">
+                            <input type="text" name="address" class="form-control input-address" placeholder="Address">
                         </div>
                     </div>
                     <div class="form-row">
                         <div class="col-md-4 mb-3">
-                            <label for="input-region">Region(Region)</label>
-                            <input type="text" name="region" class="form-control" id="input-region" placeholder="Region">
+                            <label for="input-country">Country</label>
+                            <select name="country" class="input-country"></select>
                         </div>
                         <div class="col-md-4 mb-3">
                             <label for="input-city">City(Grad)</label>
-                            <input type="text" name="city" class="form-control" id="input-city" placeholder="City">
+                            <select name="city" class="input-city"></select>
                         </div>
                         <div class="col-md-4 mb-3">
                             <label for="input-phone">Phone number</label>
-                            <input type="text" name="phone" class="form-control" id="input-phone" placeholder="Phone number">
+                            <input type="text" name="phone" class="form-control input-phone" placeholder="Phone number">
                         </div>
                     </div>
                     <div class="form-row">
                         <div class="col-md-6 mb-3">
                             <label for="input-contactperson">Name of contact persone (Ime kontakt osobe) </label>
-                            <input type="text" name="contactperson" class="form-control" id="input-contactperson" placeholder="Contact Person">
+                            <input type="text" name="contactperson" class="form-control input-contactperson" placeholder="Contact Person">
                         </div>
                         <div class="col-md-6 mb-3">
                             <label for="input-contactpersonnumber">*Phone of contact persone (Telefon kontakt osobe)</label>
-                            <input type="text" name="contactpersonnumber" class="form-control" id="input-contactpersonnumber" placeholder="Contact Person Phone Number">
+                            <input type="text" name="contactpersonnumber" class="form-control input-contactpersonnumber" placeholder="Contact Person Phone Number">
                         </div>
                     </div>
                     <div class="form-row">
                         <div class="col-md-6 mb-3">
                             <label for="input-contactperson">*VAT (PDV)</label>
-                            <input type="number" name="vat" class="form-control" id="input-vat" placeholder="VAT" maxlength="9">
+                            <input type="number" name="vat" class="form-control input-vat" placeholder="VAT" maxlength="9">
                         </div>
                         <div class="col-md-6 mb-3">
                             <label for="input-subscription">Subscription Plan</label>
@@ -230,11 +246,11 @@
                     <div class="form-row">
                         <div class="col-md-6 mb-3">
                             <label for="input-password">Password</label>
-                            <input type="password" name="password" class="form-control" id="input-password" placeholder="Password">
+                            <input type="password" name="password" class="form-control input-password" placeholder="Password">
                         </div>
                         <div class="col-md-6 mb-3">
                             <label for="input-cpassword">Confirm Password</label>
-                            <input type="password" name="password_confirmation" class="form-control" id="input-password_confirmation" placeholder="Confirm Password">
+                            <input type="password" name="password_confirmation" class="form-control input-password_confirmation" placeholder="Confirm Password">
                         </div>
                     </div>
                 </div>
@@ -248,9 +264,91 @@
 </div>
 @endsection
 
+@section('external_js')
+<script type="text/javascript" src="{{asset('assets/select2/js/select2.min.js')}}"></script>
+@endsection
 @section('scripts')
 <script>
     $(document).ready(function(){
+
+        $(".input-country").select2({
+            tags: true,
+            ajax:{
+                url: "{{route('locations.countries')}}",
+                dataType: "json",
+                data:{
+                    search: $( ".input-country").val()
+                },
+                type: "GET",
+                processResults: function (data) {
+                    return{
+                        results: $.map(data.countries, function(item){
+                            return {
+                                id: item.id,
+                                text: item.name
+                            }
+                        })
+                    }
+                }
+            }
+        });
+        $('.input-country').on('select2:select', function(){
+            $(".input-city").empty();
+            $(".input-city").select2({
+                tags: true,
+                ajax:{
+                    url: "{{route('locations.cities')}}",
+                    dataType: "json",
+                    data: function(params){
+                        var query = {
+                            search:  params.term,
+                            country: $( ".input-country").val()
+                        }
+                        
+                        return query;
+                    },
+                    type: "GET",
+                    processResults: function (data) {
+                        return{
+                            results: $.map(data.cities, function(item){
+                                return {
+                                    id: item.id,
+                                    text: item.name
+                                }
+                            })
+                        }
+                    }
+                }
+            });
+        });
+        $(".input-city").select2({
+            tags: true,
+            ajax:{
+                url: "{{route('locations.cities')}}",
+                dataType: "json",
+                data: function(params){
+                    var query = {
+                        search:  params.term,
+                        country: $( ".input-country").val()
+                    }
+                    
+                    return query;
+                },
+                type: "GET",
+                processResults: function (data) {
+                    return{
+                        results: $.map(data.cities, function(item){
+                            return {
+                                id: item.id,
+                                text: item.name
+                            }
+                        })
+                    }
+                }
+            }
+        });
+
+
         $('#form-add-vendor').on('submit', function(e){
             e.preventDefault();
 

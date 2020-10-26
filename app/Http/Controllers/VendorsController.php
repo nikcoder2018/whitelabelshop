@@ -6,8 +6,11 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use App\Http\Requests\StoreVendorRequest;
 use App\Http\Requests\UpdateVendorRequest;
-use App\User;
-use App\VendorDetails;
+use App\Vendor;
+use App\VendorProfile;
+use App\LocationRegion;
+use App\LocationCountry;
+use App\LocationCity;
 
 class VendorsController extends Controller
 {
@@ -18,7 +21,7 @@ class VendorsController extends Controller
      */
     public function index()
     {
-        $data['vendors'] = User::with('vendor_details')->where('role', 'vendor')->get();
+        $data['vendors'] = Vendor::with('vendor_details')->get();
 
         #return response()->json($data);
         return view('admin.contents.users-vendors',$data);
@@ -44,24 +47,24 @@ class VendorsController extends Controller
     {
         $validated = $request->validated();
 
-        $vendor = new User();
+        $vendor = new Vendor();
+        $vendor->vendor_name = $validated['shop_name'];
         $vendor->email = $validated['email'];
-        $vendor->firstname = $validated['firstname'];
-        $vendor->lastname = $validated['lastname'];
         $vendor->password = Hash::make($validated['password']);
-        $vendor->role = 'vendor';
+        $vendor->vat = $validated['vat'];
+        $vendor->vat_sec = $validated['vat_sec'];
+        $vendor->city = $validated['city'];
+        $vendor->country = $validated['country'];
         $vendor->save();
 
-        $vendor_details = new VendorDetails();
-        $vendor_details->user_id = $vendor->id;
-        $vendor_details->vendor_name = $validated['shop_name'];
-        $vendor_details->vat = $validated['vat'];
-        $vendor_details->address = $request->address;
-        $vendor_details->region = $request->region;
-        $vendor_details->city = $request->city;
+        $vendor_details = new VendorProfile();
+        $vendor_details->vendor_id = $vendor->id;
+        $vendor_details->firstname = $validated['firstname'];
+        $vendor_details->lastname = $validated['lastname'];
         $vendor_details->phone = $request->phone;
+        $vendor_details->address = $request->address;
         $vendor_details->contact_person_name = $request->contactperson;
-        $vendor_details->contact_person_number = $validated['contactpersonnumber'];
+        $vendor_details->contact_person_number = $request->contactpersonnumber;
         $vendor_details->subscription = $request->subscription;
         $vendor_details->save();
 

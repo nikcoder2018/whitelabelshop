@@ -11,6 +11,7 @@
         Locations
         <span class="pull-right">
             <a data-toggle="modal" href="#modal-add" class=" btn btn-success btn-sm"> Add Location</a>
+            <a data-toggle="modal" href="#modal-import" class=" btn btn-success btn-sm"> Add Import</a>
         </span>
     </header>
     <div class="card-body">
@@ -304,6 +305,7 @@
                 tagsInput.importTags(tagsInput.val()+','+tag);
             }
         });
+        
     });
 </script>
 @endsection
