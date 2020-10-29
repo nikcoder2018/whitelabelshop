@@ -20,8 +20,8 @@ class LocationsController extends Controller
      */
     public function index()
     {
-        $data['locations'] = Region::with('countries')->get();
-        return response()->json($data);
+        $data['regions'] = Region::with('countries')->get();
+        #return response()->json($data);
         return view('admin.contents.locations', $data);
     }
 

@@ -1,8 +1,13 @@
 @extends('admin.layouts.main')
 
 @section('external_css')
-<link href="{{asset('assets/summernote/summernote-bs4.css')}}" rel="stylesheet">
-<link href="{{asset('assets/bootstrap-fileupload/bootstrap-fileupload.css')}}" rel="stylesheet"/>
+<link href="{{asset('assets/fuelux/css/tree-style.css')}}" rel="stylesheet" />
+<link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.6.1/css/font-awesome.min.css" rel="stylesheet" />
+<style>
+    select {
+        font-family: 'FontAwesome', 'sans-serif';
+    }
+</style>
 @endsection
 @section('content')
 <!-- page start-->
@@ -15,42 +20,53 @@
         </span>
     </header>
     <div class="card-body">
-        <div class="row">
-            <div class="col-md-12">
-                @if(count($locations) > 0)
-                    <table class="table table-hover p-table">
-                        <thead>
-                        <tr>
-                            <th>Region</th>
-                            <th>City</th>
-                            <th>Street</th>
-                            <th></th>
-                        </tr>
-                        </thead>
-                        <tbody>
-                            @foreach ($locations as $location)
-                                <tr>
-                                    <td class="p-name">
-                                        {{$location->region}}
-                                    </td>
-                                    <td>
-                                        {{$location->city}}
-                                    </td>
-                                    <td>
-                                        {{$location->street}}
-                                    </td>
-                                    <td>
-                                        <button class="btn btn-info btn-sm btn-edit" data-id="{{$location->id}}"><i class="fa fa-pencil"></i> Edit </button>
-                                        <button class="btn btn-danger btn-sm btn-delete" data-id="{{$location->id}}"><i class="fa fa-trash-o"></i> Delete </button>
-                                    </td>
-                                </tr>
-                            @endforeach
-                        </tbody>
-                    </table>
-                @else 
-                    <p>No records found!</p>
-                @endif
+        <div id="FlatTree3" class="tree tree-plus-minus tree-solid-line tree-unselectable">
+            @foreach($regions as $region)
+            <div class="tree-folder">
+                <div class="tree-folder-header">
+                    <i class="fa fa-folder"></i>
+                    <div class="tree-folder-name">
+                        {{$region->name}} <div class="tree-actions"><i class="fa fa-edit edit-category" data-id=""></i><i class="fa fa-trash-o delete-category" data-id=""></i></div>
+                    </div>
+                </div>
+                <div class="tree-folder-content" style="display: none;">
+                    @if(count($region->countries) > 0)
+                        @foreach($region->countries as $country)
+                        <div class="tree-folder">
+                            <div class="tree-folder-header">
+                                <i class="fa fa-folder"></i>
+                                <div class="tree-folder-name">
+                                    {{$country->name}} <div class="tree-actions"><i class="fa fa-edit edit-category" data-id=""></i><i class="fa fa-trash-o delete-category" data-id=""></i></div>
+                                </div>
+                            </div>
+                            <div class="tree-folder-content" style="display:none;">
+                                @if(count($country->cities) > 0)
+                                    @foreach($country->cities as $city)
+                                    <div class="tree-item">
+                                        <i class="tree-dot"></i>
+                                        <div class="tree-item-name">
+                                            {{$city->name}} <div class="tree-actions"><i class="fa fa-edit edit-category" data-id=""></i><i class="fa fa-trash-o delete-category" data-id=""></i></div>
+                                        </div>
+                                    </div>
+                                    @endforeach
+                                @else
+                                    <div class="tree-item">
+                                        <i class="tree-dot"></i>
+                                        <div class="tree-item-name">
+                                            {{$country->name}} <div class="tree-actions"><i class="fa fa-edit edit-category" data-id=""></i><i class="fa fa-trash-o delete-category" data-id=""></i></div>
+                                        </div>
+                                    </div>
+                                @endif
+                            </div>
+                            <div class="tree-loader"></div>
+                        </div>
+                        @endforeach
+                    @else
+                    @endif
+                </div>
+                <div class="tree-loader"></div>
             </div>
+            @endforeach
         </div>
     </div>
     
@@ -133,9 +149,16 @@
 <!-- modal -->
 @endsection
 
+@section('external_js')
+    <script src="{{asset('assets/fuelux/js/tree.min.js')}}"></script>
+@endsection
+
 @section('scripts')
+<script src="{{asset('js/tree.js')}}"></script>
 <script>
     $(document).ready(function(){
+
+        TreeView.init();
 
         $('#form-add-location').on('submit', function(e){
             e.preventDefault();
