@@ -64,7 +64,7 @@
                 </td>
                 <td>{{$product->vendor->vendor_name}}</td>
                 <td>
-                    <a href="#" class="btn btn-primary btn-sm btn-view"><i class="fa fa-eye"></i> View </a>
+                    <a href="{{env('APP_FRONT_URL').'/products/'.$product->vendor_id.'/'.$product->slug}}" class="btn btn-primary btn-sm btn-view" target="_blank"><i class="fa fa-eye"></i> View </a>
                     <a href="{{route('products.edit', $product->id)}}" class="btn btn-info btn-sm btn-edit"><i class="fa fa-pencil"></i> Edit </a>
                     <button class="btn btn-danger btn-sm btn-delete" data-id="{{$product->id}}"><i class="fa fa-trash-o"></i> Delete </button>
                 </td>

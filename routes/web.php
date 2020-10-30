@@ -28,7 +28,6 @@ Route::group(['middleware' => 'auth'], function(){
     Route::post('users/vendors/update', 'VendorsController@update')->name('vendors.update');
     Route::post('users/vendors/delete', 'VendorsController@destroy')->name('vendors.destroy');
 
-
     Route::resource('pages', 'PagesController', ['except' => ['update', 'destroy']]);
     Route::post('pages/update', 'PagesController@update')->name('pages.update');
     Route::post('pages/delete', 'PagesController@destroy')->name('pages.destroy');
@@ -44,7 +43,6 @@ Route::group(['middleware' => 'auth'], function(){
     Route::resource('products', 'ProductsController', ['except' => ['update', 'destroy']]);
     Route::post('products/update', 'ProductsController@update')->name('products.update');
     Route::post('products/delete', 'ProductsController@destroy')->name('products.destroy');
-
 
     Route::resource('categories', 'CategoriesController', ['except' => ['update', 'destroy']]);
     Route::post('categories/update', 'CategoriesController@update')->name('categories.update');

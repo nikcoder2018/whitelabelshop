@@ -60,7 +60,7 @@ class ProductsController extends Controller
         $validated = $request->validated();
 
         $newProduct = new Product();
-        $newProduct->user_id = $request->vendor;
+        $newProduct->vendor_id = $request->vendor;
         $newProduct->title = $validated['title'];
         $newProduct->slug = $request->slug;
         $newProduct->description = $request->description;
@@ -124,7 +124,7 @@ class ProductsController extends Controller
      */
     public function show($id)
     {
-        //
+        
     }
 
     /**
@@ -157,7 +157,7 @@ class ProductsController extends Controller
         $validated = $request->validated();
 
         $product = Product::find($request->id);
-        $product->user_id = $request->vendor;
+        $product->vendor_id = $request->vendor;
         $product->title = $validated['title'];
         $product->slug = $validated['slug'];
         $product->description = $request->description;
