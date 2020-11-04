@@ -47,6 +47,7 @@ Route::group(['middleware' => 'auth'], function(){
     Route::resource('categories', 'CategoriesController', ['except' => ['update', 'destroy']]);
     Route::post('categories/update', 'CategoriesController@update')->name('categories.update');
     Route::post('categories/delete', 'CategoriesController@destroy')->name('categories.destroy');
+    Route::post('categories/sort', 'CategoriesController@sortCategoryAjax')->name('categories.sort');
 
     Route::resource('locations', 'LocationsController', ['except' => ['update', 'destroy','show']]);
     Route::post('locations/update', 'LocationsController@update')->name('locations.update');

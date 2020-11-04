@@ -26,7 +26,8 @@ class StoreSpecialOfferRequest extends FormRequest
         return [
             'title' => 'required|string|max:255',
             'description' => 'string|max:1024',
-            'price' => 'required',
+            'oldprice' => 'required',
+            'newprice' => 'required',
             'image' => 'mimes:jpeg,png|max:2048'
         ];
     }

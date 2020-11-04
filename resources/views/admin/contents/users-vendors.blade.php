@@ -40,7 +40,7 @@
                             @foreach($vendors as $vendor)
                                 <tr>
                                     <td class="p-name">
-                                        <a href="#">{{$vendor->vendor_name}}</a>
+                                        <a href="{{env('APP_FRONT_URL').'/restaurants/'.$vendor->id.'/details'}}" target="_blank">{{$vendor->vendor_name}}</a>
                                         <br>
                                         <small>Registered {{date('m.d.Y',strtotime($vendor->created_at))}}</small>
                                     </td>
@@ -49,7 +49,7 @@
                                         <span class="badge badge-primary">{{ucfirst($vendor->status)}}</span>
                                     </td>
                                     <td>
-                                        <a href="#" class="btn btn-primary btn-sm"><i class="fa fa-eye"></i> View </a>
+                                        <a href="{{env('APP_FRONT_URL').'/restaurants/'.$vendor->id.'/details'}}" target="_blank" class="btn btn-primary btn-sm"><i class="fa fa-eye"></i> View </a>
                                         <button class="btn btn-info btn-sm btn-edit" data-id="{{$vendor->id}}"><i class="fa fa-pencil"></i> Edit </button>
                                         <button class="btn btn-danger btn-sm btn-delete" data-id="{{$vendor->id}}"><i class="fa fa-trash-o"></i> Delete </button>
                                     </td>
@@ -209,11 +209,11 @@
                     <div class="form-row">
                         <div class="col-md-4 mb-3">
                             <label for="input-country">Country</label>
-                            <select name="country" class="input-country"></select>
+                            <select name="country" class="edit-input-country"></select>
                         </div>
                         <div class="col-md-4 mb-3">
                             <label for="input-city">City(Grad)</label>
-                            <select name="city" class="input-city"></select>
+                            <select name="city" class="edit-input-city"></select>
                         </div>
                         <div class="col-md-4 mb-3">
                             <label for="input-phone">Phone number</label>
@@ -321,6 +321,7 @@
                 }
             });
         });
+
         $(".input-city").select2({
             tags: true,
             ajax:{
@@ -348,6 +349,83 @@
             }
         });
 
+        $(".edit-input-country").select2({
+            tags: true,
+            ajax:{
+                url: "{{route('locations.countries')}}",
+                dataType: "json",
+                data:{
+                    search: $( ".edit-input-country").val()
+                },
+                type: "GET",
+                processResults: function (data) {
+                    return{
+                        results: $.map(data.countries, function(item){
+                            return {
+                                id: item.id,
+                                text: item.name
+                            }
+                        })
+                    }
+                }
+            }
+        });
+        $('.edit-input-country').on('select2:select', function(){
+            $(".input-city").empty();
+            $(".input-city").select2({
+                tags: true,
+                ajax:{
+                    url: "{{route('locations.cities')}}",
+                    dataType: "json",
+                    data: function(params){
+                        var query = {
+                            search:  params.term,
+                            country: $( ".edit-input-country").val()
+                        }
+                        
+                        return query;
+                    },
+                    type: "GET",
+                    processResults: function (data) {
+                        return{
+                            results: $.map(data.cities, function(item){
+                                return {
+                                    id: item.id,
+                                    text: item.name
+                                }
+                            })
+                        }
+                    }
+                }
+            });
+        });
+
+        $(".edit-input-city").select2({
+            tags: true,
+            ajax:{
+                url: "{{route('locations.cities')}}",
+                dataType: "json",
+                data: function(params){
+                    var query = {
+                        search:  params.term,
+                        country: $( ".edit-input-country").val()
+                    }
+                    
+                    return query;
+                },
+                type: "GET",
+                processResults: function (data) {
+                    return{
+                        results: $.map(data.cities, function(item){
+                            return {
+                                id: item.id,
+                                text: item.name
+                            }
+                        })
+                    }
+                }
+            }
+        });
 
         $('#form-add-vendor').on('submit', function(e){
             e.preventDefault();
@@ -421,20 +499,20 @@
             modal.modal('show');
             form.find('input[name=id]').val(vendor.id);
             form.find('input[name=email]').val(vendor.email);
-            form.find('input[name=firstname]').val(vendor.firstname);
-            form.find('input[name=lastname]').val(vendor.lastname);
-            
+            form.find('input[name=shop_name]').val(vendor.vendor_name);
+            form.find('input[name=country]').val(vendor.country);
+            form.find('input[name=city]').val(vendor.city);
+            form.find('input[name=vat]').val(vendor.vat);
+
             if(vendor.vendor_details){
-                form.find('input[name=shop_name]').val(vendor.vendor_details.vendor_name);
+                form.find('input[name=firstname]').val(vendor.vendor_details.firstname);
+                form.find('input[name=lastname]').val(vendor.vendor_details.lastname);
                 form.find('input[name=address]').val(vendor.vendor_details.address);
-                form.find('input[name=region]').val(vendor.vendor_details.region);
-                form.find('input[name=city]').val(vendor.vendor_details.city);
                 form.find('input[name=phone]').val(vendor.vendor_details.phone);
-                form.find('input[name=vat]').val(vendor.vendor_details.vat);
+                
                 form.find('input[name=contactperson]').val(vendor.vendor_details.contact_person_name);
                 form.find('input[name=contactpersonnumber]').val(vendor.vendor_details.contact_person_number);
                 form.find('select[name=subscription]').val(vendor.vendor_details.subscription);
-
             }
         });
 

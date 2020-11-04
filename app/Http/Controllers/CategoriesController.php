@@ -20,7 +20,7 @@ class CategoriesController extends Controller
     public function index()
     {
         $categories = Category::all();
-        $data['categories_tree'] = Category::BuildTreeHTML($categories->toArray());
+        $data['categories_nestable'] = Category::BuildNestableHTML($categories->toArray());
         $data['categories'] = $categories;
 
         #return response()->json($data);
@@ -173,4 +173,21 @@ class CategoriesController extends Controller
         return response()->json($category);
     }
 
+    public function sortCategoryAjax(Request $request){
+        $this->sortCategory($request->list, null);
+    }
+    public function sortCategory($categories, $parent){
+        foreach($categories as $order=>$category){
+            $cat = Category::find($category['id']);
+            
+            $cat->parent = $parent;
+            
+            $cat->order = $order;
+            $cat->save();
+
+            if(isset($category['children'])){
+                $this->sortCategory($category['children'], $category['id']);
+            }
+        }
+    }
 }

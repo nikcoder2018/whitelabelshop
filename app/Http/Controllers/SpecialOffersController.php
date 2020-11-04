@@ -53,7 +53,8 @@ class SpecialOffersController extends Controller
         $offer->date_end = date('Y-m-d', strtotime($request->date_start));
         $offer->time_start = date('h:i:s', strtotime($request->time_start));
         $offer->time_end = date('h:i:s', strtotime($request->time_end));
-        $offer->price = $validated['price'];
+        $offer->old_price = $validated['oldprice'];
+        $offer->new_price = $validated['newprice'];
         $offer->status = 'active';
 
         if($request->hasFile('image')){
@@ -118,8 +119,8 @@ class SpecialOffersController extends Controller
         $offer->date_end = date('Y-m-d', strtotime($request->date_start));
         $offer->time_start = date('h:i:s', strtotime($request->time_start));
         $offer->time_end = date('h:i:s', strtotime($request->time_end));
-        $offer->price = $validated['price'];
-
+        $offer->old_price = $validated['oldprice'];
+        $offer->new_price = $validated['newprice'];
         if($request->hasFile('image')){
             if($request->file('image')->isValid()){
                 // Get image file

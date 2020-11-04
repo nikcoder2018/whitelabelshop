@@ -46,7 +46,8 @@
             <th>Image</th>
             <th>Title</th>
             <th>Description</th>
-            <th>Price</th>
+            <th>Old Price</th>
+            <th>New Price</th>
             <th>Status</th>
             <th></th>
         </tr>
@@ -67,12 +68,12 @@
                     {{$offer->title}}
                 </td>
                 <td>{{$offer->description}}</td>
-                <td>{{$offer->price}}</td>
+                <td>{{$offer->old_price}}</td>
+                <td>{{$offer->new_price}}</td>
                 <td>
                     <span class="badge badge-primary">{{ucfirst($offer->status)}}</span>
                 </td>
                 <td>
-                    <a href="#" class="btn btn-primary btn-sm btn-view"><i class="fa fa-eye"></i> View </a>
                     <button class="btn btn-info btn-sm btn-edit" data-id="{{$offer->id}}"><i class="fa fa-pencil"></i> Edit </button>
                     <button class="btn btn-danger btn-sm btn-delete" data-id="{{$offer->id}}"><i class="fa fa-trash-o"></i> Delete </button>
                 </td>
@@ -166,10 +167,16 @@
                         </div>
                     </div>
                     <div class="form-group row">
-                       <label for="input-price" class="col-form-label col-lg-2 col-sm-12">Price</label>
+                       <label for="input-price" class="col-form-label col-lg-2 col-sm-12">Old Price</label>
                        <div class="col-md-5 col-sm-12">
-                            <input type="number" name="price" class="form-control" id="input-price" step="0.1">
+                            <input type="number" name="oldprice" class="form-control" id="input-price" step="0.1">
                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label for="input-price" class="col-form-label col-lg-2 col-sm-12">New Price</label>
+                        <div class="col-md-5 col-sm-12">
+                             <input type="number" name="newprice" class="form-control" id="input-price" step="0.1">
+                        </div>
                     </div>
                 </div>
                 <div class="modal-footer">
@@ -262,11 +269,17 @@
                         </div>
                     </div>
                     <div class="form-group row">
-                       <label for="input-price" class="col-form-label col-lg-2 col-sm-12">Price</label>
-                       <div class="col-md-5 col-sm-12">
-                            <input type="number" name="price" class="form-control" id="input-price" step="0.1">
-                       </div>
-                    </div>
+                        <label for="input-price" class="col-form-label col-lg-2 col-sm-12">Old Price</label>
+                        <div class="col-md-5 col-sm-12">
+                             <input type="number" name="oldprice" class="form-control" id="input-price" step="0.1">
+                        </div>
+                     </div>
+                     <div class="form-group row">
+                         <label for="input-price" class="col-form-label col-lg-2 col-sm-12">New Price</label>
+                         <div class="col-md-5 col-sm-12">
+                              <input type="number" name="newprice" class="form-control" id="input-price" step="0.1">
+                         </div>
+                     </div>
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
@@ -375,7 +388,8 @@
 
         form.find('.timepicker-default').timepicker();
 
-        form.find('input[name=price]').val(soffer.price);
+        form.find('input[name=oldprice]').val(soffer.old_price);
+        form.find('input[name=newprice]').val(soffer.new_price);
     });
     $('#form-edit-offer').on('submit', function(e){
         e.preventDefault();

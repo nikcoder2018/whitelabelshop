@@ -52,7 +52,6 @@ class VendorsController extends Controller
         $vendor->email = $validated['email'];
         $vendor->password = Hash::make($validated['password']);
         $vendor->vat = $validated['vat'];
-        $vendor->vat_sec = $validated['vat_sec'];
         $vendor->city = $validated['city'];
         $vendor->country = $validated['country'];
         $vendor->save();
@@ -108,31 +107,29 @@ class VendorsController extends Controller
     {
         $validated = $request->validated();
 
-        $vendor = User::find($request->id);
+        $vendor = Vendor::find($request->id);
         $vendor->email = $validated['email'];
-        $vendor->firstname = $validated['firstname'];
-        $vendor->lastname = $validated['lastname'];
-
+        $vendor->vendor_name = $validated['shop_name'];
+        $vendor->country = $request->country;
+        $vendor->city = $request->city;
+        $vendor->vat = $validated['vat'];
+        
         if($request->password)
         $vendor->password = Hash::make($request->password);
-
-        $vendor->role = 'vendor';
         $vendor->save();
         
-        if(VendorDetails::where('user_id', $vendor->id)->exists())
-            $vendor_details = VendorDetails::where('user_id', $vendor->id)->first();
+        if(VendorProfile::where('vendor_id', $vendor->id)->exists())
+            $vendor_details = VendorProfile::where('vendor_id', $vendor->id)->first();
         else 
-            $vendor_details = new VendorDetails;
+            $vendor_details = new VendorProfile;
 
-        $vendor_details->user_id = $vendor->id;
-        $vendor_details->vendor_name = $validated['shop_name'];
-        $vendor_details->vat = $validated['vat'];
+        $vendor_details->vendor_id = $vendor->id;
+        $vendor_details->firstname = $validated['firstname'];
+        $vendor_details->lastname = $validated['lastname'];
         $vendor_details->address = $request->address;
-        $vendor_details->region = $request->region;
-        $vendor_details->city = $request->city;
         $vendor_details->phone = $request->phone;
         $vendor_details->contact_person_name = $request->contactperson;
-        $vendor_details->contact_person_number = $validated['contactpersonnumber'];
+        $vendor_details->contact_person_number = $request->contactpersonnumber;
         $vendor_details->subscription = $request->subscription;
         $vendor_details->save();
 
@@ -152,7 +149,7 @@ class VendorsController extends Controller
      */
     public function destroy(Request $request)
     {
-        $vendor = User::where('id', $request->id);
+        $vendor = Vendor::where('id', $request->id);
         $vendor->delete();
 
         if($vendor){
@@ -163,7 +160,7 @@ class VendorsController extends Controller
     }
 
     public function getVendorDataJSON(Request $request){
-        $vendor = User::with('vendor_details')->find($request->id);
+        $vendor = Vendor::with('vendor_details')->find($request->id);
         return response()->json($vendor);
     }
 }

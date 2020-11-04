@@ -2,11 +2,19 @@
 
 @section('external_css')
     <link href="{{asset('assets/bootstrap-fileupload/bootstrap-fileupload.css')}}" rel="stylesheet"/>
-    <link href="{{asset('assets/fuelux/css/tree-style.css')}}" rel="stylesheet" />
     <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.6.1/css/font-awesome.min.css" rel="stylesheet" />
+    <link rel="stylesheet" type="text/css" href="{{asset('assets/nestable/jquery.nestable.css')}}" />
     <style>
         select {
             font-family: 'FontAwesome', 'sans-serif';
+        }
+
+        .nestable-actions{
+            position: absolute;
+            margin-top: -20px;
+            right: 4px;
+            z-index: 1;
+            cursor: pointer;
         }
     </style>
 @endsection
@@ -145,9 +153,14 @@
                 Categories
             </div>
             <div class="card-body">
-                <div id="FlatTree3" class="tree tree-plus-minus tree-solid-line tree-unselectable">
-                    {!!$categories_tree!!}
+                <div class="dd" id="nestable">
+                    <ol class='dd-list'>
+                        {!!$categories_nestable!!}
+                    </ol>
                 </div>
+                {{-- <div id="FlatTree3" class="tree tree-plus-minus tree-solid-line tree-unselectable">
+                    {!!$categories_tree!!}
+                </div> --}}
             </div>
         </div>
     </div>
@@ -155,15 +168,26 @@
 @endsection
 
 @section('external_js')
-    <script src="{{asset('assets/fuelux/js/tree.min.js')}}"></script>
+    <script src="{{asset('assets/nestable/jquery.nestable.js')}}"></script>
     <script src="{{asset('assets/bootstrap-fileupload/bootstrap-fileupload.js')}}"></script>
 @endsection
 
 @section('scripts')
-    <script src="{{asset('js/tree.js')}}"></script>
     <script>
         $(document).ready(function() {
-            TreeView.init();
+            //TreeView.init();
+            $('#nestable').nestable().on('change', function(e){
+                var list = e.length ? e : $(e.target), output = list.data('output');
+                $.ajax({
+                    url: "{{route('categories.sort')}}",
+                    type: 'POST',
+                    data: {
+                        _token: $('meta[name="csrf-token"]').attr('content'),
+                        list: list.nestable('serialize')
+                    }
+                });
+            });
+
             $('#form-add-category').on('submit', function(e){
                 e.preventDefault();
                 $.ajax({
@@ -175,8 +199,13 @@
                     processData:false,
                     success: function(resp){
                         if(resp.success){
-                            $('#FlatTree3').hide();
-                            $('#FlatTree3').html(resp.html_build).fadeIn();
+                            swal({
+                                title: 'Success!',
+                                text: resp.msg,
+                                icon: "success",
+                            }).then(()=>{
+                                location.reload();
+                            });
                             $('#form-add-category')[0].reset();
                         }
                     }
@@ -210,10 +239,7 @@
                             swal(resp.msg, {
                                 icon: "success",
                             }).then(()=>{
-                                $('#FlatTree3').hide();
-                                $('#FlatTree3').html(resp.html_build).fadeIn();
-                                $('#form-edit-category').find('.thumbnail-image').attr('src', 'http://www.placehold.it/300x250/EFEFEF/AAAAAA&amp;text=no+image');
-                                $('#form-edit-category')[0].reset();
+                                location.reload();
                             });
                             
                         }
@@ -234,7 +260,8 @@
                     $('#form-edit-category').find('input[name=slug]').val(slug);
                 }
             });
-            $('#FlatTree3').on('click', '.edit-category', async function(e){
+            $('#nestable').on('click', '.edit-category', async function(e){
+                console.log('test');
                 e.stopPropagation();
                 let category_id = $(this).data('id');
                 let card_add = $('#card-add-category');
@@ -264,8 +291,7 @@
                 form_edit.find('select[name=parent]').val(category.parent);
                 
             });
-
-            $('#FlatTree3').on('click', '.delete-category', function(e){
+            $('#nestable').on('click', '.delete-category', function(e){
                 e.stopPropagation();
                 let category_id = $(this).data('id');
                 swal({
@@ -290,7 +316,7 @@
                             swal(goDelete.msg, {
                                 icon: "success",
                             }).then(()=>{
-                                $('#FlatTree3').html(goDelete.html_build);
+                                location.reload();
                             });
                         }else{
                             swal(goDelete.msg, {
@@ -301,7 +327,6 @@
                     }
                 });
             });
-
             $('.btn-addnew').on('click',function(){
                 let card_add = $('#card-add-category');
                 let card_edit = $('#card-edit-category');
@@ -310,7 +335,6 @@
                 card_add.show();
                 
             });
-
         });
 
         

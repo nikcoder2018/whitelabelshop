@@ -8,7 +8,7 @@ class Category extends Model
 {
     protected $table = "categories";
 
-    protected $fillable = ['name', 'slug', 'description', 'image', 'icon', 'parent', 'status'];
+    protected $fillable = ['name', 'slug', 'description', 'image', 'icon', 'parent','order', 'status'];
 
     function productcategory(){
         return $this->hasMany(ProductCategory::class);
@@ -117,4 +117,47 @@ class Category extends Model
         
         return $html;
     }
+
+    
+    function scopeBuildNestableHTML($query, array $elements, $parentId = 0) {
+        $html = '';
+
+        foreach ($elements as $element) {
+            if ($element['parent'] == $parentId) {
+                $children = $this->buildNestableHTML($elements, $element['id']);
+                
+                if ($children != '') {
+                    $html .= "<li class='dd-item dd3-item' data-id='{$element['id']}'>
+                    <div class='dd-handle dd3-handle'></div>
+                    <div class='dd3-content'>
+                        {$element['name']}
+                        <div class='nestable-actions'>
+                            <i class='fa fa-edit edit-category' data-id='{$element['id']}'></i>
+                            <i class='fa fa-trash-o delete-category' data-id='{$element['id']}'></i>
+                        </div>
+                    </div>
+                    <ol class='dd-list'>
+                    {$children}
+                    </ol>
+                </li>";
+                }else{
+                    $html .= "<li class='dd-item dd3-item' data-id='{$element['id']}'>
+                    <div class='dd-handle dd3-handle'></div>
+                    <div class='dd3-content'>
+                        {$element['name']} 
+                        <div class='nestable-actions'>
+                            <i class='fa fa-edit edit-category' data-id='{$element['id']}'></i>
+                            <i class='fa fa-trash-o delete-category' data-id='{$element['id']}'></i>
+                        </div>
+                    </div>
+                </li>";
+                }
+
+            }
+        }
+        
+        return $html;
+    }
+
+ 
 }

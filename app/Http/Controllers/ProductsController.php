@@ -139,7 +139,7 @@ class ProductsController extends Controller
         $data['tags'] = Tag::where('user_id', Auth::user()->id)->get();
         $data['categoriesHTML'] = Category::BuildTreeHTML2(Category::all()->toArray(), 0, ProductCategory::where('product_id', $id)->get());
         $data['product'] = Product::with(['categories', 'tags'])->where('id', $id)->first();
-        $data['vendors'] = User::with('vendor_details')->where('role', 'vendor')->get();
+        $data['vendors'] = Vendor::all();
 
         #return response()->json($data);exit;
         return view('admin.contents.products-edit', $data);
