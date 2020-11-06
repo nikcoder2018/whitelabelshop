@@ -56,10 +56,7 @@
     <script class="include" type="text/javascript" src="{{asset('js/jquery.dcjqaccordion.2.7.js')}}"></script>
     <script src="{{asset('js/jquery.scrollTo.min.js')}}"></script>
     <script src="{{asset('js/jquery.nicescroll.js')}}" type="text/javascript"></script>
-    <script src="{{asset('js/jquery.sparkline.js')}}" type="text/javascript"></script>
-    <script src="{{asset('assets/jquery-easy-pie-chart/jquery.easy-pie-chart.js')}}"></script>
     <script src="{{asset('js/owl.carousel.js')}}" ></script>
-    <script src="{{asset('js/jquery.customSelect.min.js')}}" ></script>
     <script src="{{asset('js/respond.min.js')}}" ></script>
     <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
     

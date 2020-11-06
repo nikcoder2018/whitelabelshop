@@ -64,6 +64,7 @@ Route::group(['middleware' => 'auth'], function(){
 
     Route::resource('attributes', 'AttributesController');
 
+    Route::get('charts', 'ChartsController@index')->name('charts.index');
     
     Route::prefix('json')->group(function(){
         Route::get('all_categories', 'CategoriesController@getCategoriesJSON')->name('json.getcategories');

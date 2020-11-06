@@ -1,7 +1,7 @@
 @extends('admin.layouts.main')
 
 @section('external_css')
-<link href="{{asset('assets/jquery-easy-pie-chart/jquery.easy-pie-chart.css')}}" rel="stylesheet" type="text/css" media="screen"/>
+<link rel="stylesheet" href="{{asset('assets/chart.js/dist/Chart.min.css')}}" type="text/css">
 <link rel="stylesheet" href="{{asset('css/owl.carousel.css')}}" type="text/css">
 @endsection
 
@@ -27,7 +27,7 @@
                 <i class="fa fa-shopping-cart"></i>
             </div>
             <div class="value">
-                <h1 class=" count2">
+                <h1 class="count2">
                     {{$total_products}}
                 </h1>
                 <p>Products</p>
@@ -67,66 +67,16 @@
     <div class="col-lg-8">
         <!--custom chart start-->
         <div class="border-head">
-            <h3>Visitors Graph</h3>
+            <h3>Statistics</h3>
         </div>
-        <div class="custom-bar-chart">
-            <ul class="y-axis">
-                <li><span>100</span></li>
-                <li><span>80</span></li>
-                <li><span>60</span></li>
-                <li><span>40</span></li>
-                <li><span>20</span></li>
-                <li><span>0</span></li>
-            </ul>
-            <div class="bar">
-                <div class="title">JAN</div>
-                <div class="value tooltips" data-original-title="80%" data-toggle="tooltip" data-placement="top">80%</div>
-            </div>
-            <div class="bar ">
-                <div class="title">FEB</div>
-                <div class="value tooltips" data-original-title="50%" data-toggle="tooltip" data-placement="top">50%</div>
-            </div>
-            <div class="bar ">
-                <div class="title">MAR</div>
-                <div class="value tooltips" data-original-title="40%" data-toggle="tooltip" data-placement="top">40%</div>
-            </div>
-            <div class="bar ">
-                <div class="title">APR</div>
-                <div class="value tooltips" data-original-title="55%" data-toggle="tooltip" data-placement="top">55%</div>
-            </div>
-            <div class="bar">
-                <div class="title">MAY</div>
-                <div class="value tooltips" data-original-title="20%" data-toggle="tooltip" data-placement="top">20%</div>
-            </div>
-            <div class="bar ">
-                <div class="title">JUN</div>
-                <div class="value tooltips" data-original-title="39%" data-toggle="tooltip" data-placement="top">39%</div>
-            </div>
-            <div class="bar">
-                <div class="title">JUL</div>
-                <div class="value tooltips" data-original-title="75%" data-toggle="tooltip" data-placement="top">75%</div>
-            </div>
-            <div class="bar ">
-                <div class="title">AUG</div>
-                <div class="value tooltips" data-original-title="45%" data-toggle="tooltip" data-placement="top">45%</div>
-            </div>
-            <div class="bar ">
-                <div class="title">SEP</div>
-                <div class="value tooltips" data-original-title="50%" data-toggle="tooltip" data-placement="top">50%</div>
-            </div>
-            <div class="bar ">
-                <div class="title">OCT</div>
-                <div class="value tooltips" data-original-title="42%" data-toggle="tooltip" data-placement="top">42%</div>
-            </div>
-            <div class="bar ">
-                <div class="title">NOV</div>
-                <div class="value tooltips" data-original-title="60%" data-toggle="tooltip" data-placement="top">60%</div>
-            </div>
-            <div class="bar ">
-                <div class="title">DEC</div>
-                <div class="value tooltips" data-original-title="90%" data-toggle="tooltip" data-placement="top">90%</div>
-            </div>
+        <div class="text-center">
+            <button class="btn btn-primary btn-sm btn-action" type="today">1 day</button>
+            <button class="btn btn-primary btn-sm btn-action" type="daily">7 days</button>
+            <button class="btn btn-primary btn-sm btn-action" type="weekly">1 Month</button>
+            <button class="btn btn-primary btn-sm btn-action" type="monthly">12 Months</button>
+            <button class="btn btn-primary btn-sm btn-action" type="yearly">All</button>
         </div>
+        <canvas id="line" height="300" width="730"></canvas>
         <!--custom chart end-->
     </div>
     <div class="col-lg-4">
@@ -176,37 +126,48 @@
 
 @endsection
 
-@section('script')
+@section('scripts')
 <!--script for this page-->
-<script src="{{asset('js/sparkline-chart.js')}}"></script>
-<script src="{{asset('js/easy-pie-chart.js')}}"></script>
-<script src="{{asset('js/count.js')}}"></script>
-
+<script src="{{asset('assets/chart.js/dist/Chart.min.js')}}"></script>
 <script>
-
-    //owl carousel
-
-    $(document).ready(function() {
-        $("#owl-demo").owlCarousel({
-            navigation : true,
-            slideSpeed : 300,
-            paginationSpeed : 400,
-            singleItem : true,
-            autoPlay:true
-
+    var ctx = document.getElementById("line").getContext('2d');
+    var myChart = new Chart(ctx, {});
+    $('.btn-action').on('click', function(){
+        let type = $(this).attr('type');
+        $.get("{{route('charts.index')}}", {type}, function(response){
+            myChart.destroy();
+            myChart = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: response.labels,
+                    datasets:[
+                        {
+                            label: 'Phone Views',
+                            borderColor: "#8e5ea2",
+                            borderWidth: 1,
+                            data : response.data.phoneviews
+                        },
+                        {
+                            label: 'Product Views',
+                            borderColor: "#3e95cd",
+                            borderWidth: 1,
+                            data : response.data.productviews
+                        }
+                    ]
+                },
+                options: {
+                    scales: {
+                        yAxes: [{
+                            ticks: {
+                                beginAtZero:true
+                            }
+                        }]
+                    }
+                }
+            });
         });
     });
 
-    //custom select box
-
-    $(function(){
-        $('select.styled').customSelect();
-    });
-
-    $(window).on("resize",function(){
-        var owl = $("#owl-demo").data("owlCarousel");
-        owl.reinit();
-    });
-
+    $('.btn-action:first').trigger('click');
 </script>
 @endsection
