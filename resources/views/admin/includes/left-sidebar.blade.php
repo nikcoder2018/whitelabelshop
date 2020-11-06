@@ -73,8 +73,9 @@
                     <span>Settings</span>
                 </a>
                 <ul class="sub">
-                    <li><a href="/">General</a></li>
-                    <li><a href="/">Menu</a></li>
+                    <li><a href="{{route('settings.header')}}">Header</a></li>
+                    <li><a href="{{route('settings.footer')}}">Footer</a></li>
+                    <li><a href="{{route('settings.banner')}}">Banner</a></li>
                 </ul>
             </li>
         </ul>

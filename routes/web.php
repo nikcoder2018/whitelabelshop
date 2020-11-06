@@ -66,6 +66,13 @@ Route::group(['middleware' => 'auth'], function(){
 
     Route::get('charts', 'ChartsController@index')->name('charts.index');
     
+    Route::get('settings/header', 'SettingsController@header')->name('settings.header');
+    Route::get('settings/footer', 'SettingsController@footer')->name('settings.footer');
+    Route::get('settings/banner', 'SettingsController@banner')->name('settings.banner');
+    Route::post('settings/header', 'SettingsController@header')->name('settings.header');
+    Route::post('settings/footer', 'SettingsController@footer')->name('settings.footer');
+    Route::post('settings/banner', 'SettingsController@banner')->name('settings.banner');
+    
     Route::prefix('json')->group(function(){
         Route::get('all_categories', 'CategoriesController@getCategoriesJSON')->name('json.getcategories');
         Route::post('get_category', 'CategoriesController@getCategoryDataJSON')->name('json.getcategorydata');
