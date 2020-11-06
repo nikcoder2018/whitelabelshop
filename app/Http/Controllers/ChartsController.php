@@ -145,8 +145,8 @@ class ChartsController extends Controller
                 break;
 
                 case 'yearly': 
-                    $phone = PhoneView::orderBy('date', 'ASC')->first()->date;
-                    $product = ProductVisit::orderBy('date', 'ASC')->first()->date;
+                    @$phone = PhoneView::orderBy('date', 'ASC')->first()->date;
+                    @$product = ProductVisit::orderBy('date', 'ASC')->first()->date;
                     $start = 0;
 
                     if($phone < $product){
