@@ -6,7 +6,6 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 use Illuminate\Http\UploadedFile;
 
-use App\Location;
 use App\LocationRegion as Region;
 use App\LocationCountry as Country;
 use App\LocationCity as City;
@@ -21,6 +20,7 @@ class LocationsController extends Controller
     public function index()
     {
         $data['regions'] = Region::with('countries')->get();
+        $data['countries'] = Country::all();
         #return response()->json($data);
         return view('admin.contents.locations', $data);
     }
@@ -43,19 +43,28 @@ class LocationsController extends Controller
      */
     public function store(Request $request)
     {
-        $location = new Location();
-        $location->region = $request->region;
-        $location->city = $request->city;
-        $location->street = $request->street;
-        $location->save();
-
-        if($location){
-            return response()->json(array('success' => true, 'msg' => 'New location created!'));
-        }else{
-            return response()->json(array('success' => false, 'msg' => 'Something went wrong on the system, Please try again!'));
+        switch($request->type){
+            case 'region': 
+                Region::create([
+                    'name' => $request->name
+                ]);
+            break;
+            case 'country': 
+                Country::create([
+                    'region' => $request->region_id,
+                    'name' => $request->name
+                ]);
+            break;
+            case 'city': 
+                City::create([
+                    'country' => $request->country_id,
+                    'name' => $request->name
+                ]);
+            break;
         }
-    }
 
+        return response()->json(array('success' => true, 'msg' => 'New location created!'));
+    }
     public function import(Request $request){
         $file = $request->file('file');
       
@@ -191,17 +200,27 @@ class LocationsController extends Controller
      */
     public function update(Request $request)
     {
-        $location = Location::where('id', $request->id)->first();
-        $location->region = $request->region;
-        $location->city = $request->city;
-        $location->street = $request->street;
-        $location->save();
-
-        if($location){
-            return response()->json(array('success' => true, 'msg' => 'Llocation updated!'));
-        }else{
-            return response()->json(array('success' => false, 'msg' => 'Something went wrong on the system, Please try again!'));
+        switch($request->type){
+            case 'region': 
+                $region = Region::find($request->id);
+                $region->name = $request->name;
+                $region->save();
+            break;
+            case 'country': 
+                $country = Country::find($request->id);
+                $country->region = $request->region_id;
+                $country->name = $request->name;
+                $country->save();
+            break;
+            case 'city': 
+                $city = City::find($request->id);
+                $city->country = $request->country_id;
+                $city->name = $request->name;
+                $city->save();
+            break;
         }
+
+        return response()->json(array('success' => true, 'msg' => 'Location updated!'));
     }
 
     /**
@@ -212,19 +231,36 @@ class LocationsController extends Controller
      */
     public function destroy(Request $request)
     {
-        $location = Location::where('id', $request->id);
-        $location->delete();
-
-        if($location){
-            return response()->json(array('success' => true, 'msg' => 'Location has been deleted!'));
-        }else{
-            return response()->json(array('success' => false, 'msg' => 'We cant delete this Page, please try again!'));
+        switch($request->type){
+            case 'region': 
+                $region = Region::find($request->id);
+                $region->delete();
+            break;
+            case 'country': 
+                $country = Country::find($request->id);
+                $country->delete();
+            break;
+            case 'city': 
+                $city = City::find($request->id);
+                $city->delete();
+            break;
         }
+        
+        return response()->json(array('success' => true, 'msg' => 'Location has been deleted!'));
     }
 
     public function getLocationDataJSON(Request $request){
-        $location = Location::where('id',$request->id)->first();
-        return response()->json($location);
+        switch($request->type){
+            case 'region': 
+                return response()->json(Region::where('id',$request->id)->first());
+            break;
+            case 'country': 
+                return response()->json(Country::where('id',$request->id)->first());
+            break;
+            case 'city': 
+                return response()->json(City::where('id',$request->id)->first());
+            break;
+        }
     }
 
     public function countries(Request $request){

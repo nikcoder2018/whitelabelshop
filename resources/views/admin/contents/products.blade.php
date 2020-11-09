@@ -1,6 +1,8 @@
 @extends('admin.layouts.main')
 
 @section('stylesheets')
+<link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+
 <style>
     .p-thumb img {
         width: 50px;
@@ -23,7 +25,9 @@
         <div class="row">
             <div class="col-md-12">
             @if(count($products) > 0)
-                <input type="text" placeholder="Search Here" class="input-sm form-control">
+                <form action="">
+                    <input type="text" id="input-search" placeholder="Search Here" value="{{@$search}}" class="input-sm form-control">
+                </form>
             @else 
                 <p>No records found!</p>
             @endif
@@ -78,6 +82,7 @@
 @endsection
 
 @section('scripts')
+<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
 <script>
     $('.btn-delete').on('click', function(){
         let product_id = $(this).data('id');
@@ -114,5 +119,26 @@
                 }
             });
     });
+    $( "#input-search").autocomplete({
+        source: async function(request, response){
+            let data = await $.ajax({
+                url: "{{route('products.all')}}",
+                dataType: "json",
+                data:{
+                    search: $( "#input-search").val()
+                },
+                type: "GET"
+            });
+            response($.map(data.products, function(item){
+                return {
+                    label: item.title,
+                    value: item.title
+                };
+            }));
+        },
+        select: function(event, ui){
+            location.href = "products?search="+ui.item.value;
+        }
+      });
 </script>
 @endsection

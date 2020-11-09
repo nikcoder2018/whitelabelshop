@@ -25,9 +25,10 @@ class ProductsController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(Request $request)
     {
-        $data['products'] = Product::with(['vendor','categories'])->get();
+        $data['search'] = $request->search;
+        $data['products'] = Product::with(['vendor','categories'])->where('title', 'like', $request->search.'%')->get();
         
         #return response()->json($data);exit;
         return view('admin.contents.products',$data);
@@ -144,6 +145,17 @@ class ProductsController extends Controller
         #return response()->json($data);exit;
         return view('admin.contents.products-edit', $data);
     }
+
+    public function all(Request $request)
+    {
+        if($request->search != null){
+            $data['products'] = Product::where('title', 'like', $request->search.'%')->get();
+        }else{
+            $data['products'] = Product::all();
+        }
+        return response()->json($data);
+    }
+
 
     /**
      * Update the specified resource in storage.

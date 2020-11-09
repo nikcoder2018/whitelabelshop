@@ -261,7 +261,6 @@
                 }
             });
             $('#nestable').on('click', '.edit-category', async function(e){
-                console.log('test');
                 e.stopPropagation();
                 let category_id = $(this).data('id');
                 let card_add = $('#card-add-category');

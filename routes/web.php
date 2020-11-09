@@ -40,9 +40,10 @@ Route::group(['middleware' => 'auth'], function(){
     Route::post('tags/update', 'TagsController@update')->name('tags.update');
     Route::post('tags/delete', 'TagsController@destroy')->name('tags.destroy');
 
-    Route::resource('products', 'ProductsController', ['except' => ['update', 'destroy']]);
+    Route::resource('products', 'ProductsController', ['except' => ['show','update', 'destroy']]);
     Route::post('products/update', 'ProductsController@update')->name('products.update');
     Route::post('products/delete', 'ProductsController@destroy')->name('products.destroy');
+    Route::get('products/all', 'ProductsController@all')->name('products.all');
 
     Route::resource('categories', 'CategoriesController', ['except' => ['update', 'destroy']]);
     Route::post('categories/update', 'CategoriesController@update')->name('categories.update');

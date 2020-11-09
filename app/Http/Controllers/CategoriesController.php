@@ -19,7 +19,7 @@ class CategoriesController extends Controller
      */
     public function index()
     {
-        $categories = Category::all();
+        $categories = Category::orderBy('order', 'ASC')->get();
         $data['categories_nestable'] = Category::BuildNestableHTML($categories->toArray());
         $data['categories'] = $categories;
 
