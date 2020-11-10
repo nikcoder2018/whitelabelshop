@@ -231,11 +231,15 @@
                         </div>
                     </div>
                     <div class="form-row">
-                        <div class="col-md-6 mb-3">
-                            <label for="input-contactperson">*VAT (PDV)</label>
+                        <div class="col-md-4 mb-3">
+                            <label for="input-contactperson">*PIB (number unique)</label>
                             <input type="number" name="vat" class="form-control input-vat" placeholder="VAT" maxlength="9">
                         </div>
-                        <div class="col-md-6 mb-3">
+                        <div class="col-md-4 mb-3">
+                            <label for="input-contactperson">*Matični broj (number unique)</label>
+                            <input type="number" name="vat_sec" class="form-control input-vat" placeholder="VAT" maxlength="9">
+                        </div>
+                        <div class="col-md-4 mb-3">
                             <label for="input-subscription">Subscription Plan</label>
                             <select name="subscription" class="form-control">
                                 <option value="basic">Basic Plan</option>
@@ -284,7 +288,7 @@
                     return{
                         results: $.map(data.countries, function(item){
                             return {
-                                id: item.id,
+                                id: item.name,
                                 text: item.name
                             }
                         })
@@ -312,7 +316,7 @@
                         return{
                             results: $.map(data.cities, function(item){
                                 return {
-                                    id: item.id,
+                                    id: item.name,
                                     text: item.name
                                 }
                             })
@@ -340,85 +344,7 @@
                     return{
                         results: $.map(data.cities, function(item){
                             return {
-                                id: item.id,
-                                text: item.name
-                            }
-                        })
-                    }
-                }
-            }
-        });
-
-        $(".edit-input-country").select2({
-            tags: true,
-            ajax:{
-                url: "{{route('locations.countries')}}",
-                dataType: "json",
-                data:{
-                    search: $( ".edit-input-country").val()
-                },
-                type: "GET",
-                processResults: function (data) {
-                    return{
-                        results: $.map(data.countries, function(item){
-                            return {
-                                id: item.id,
-                                text: item.name
-                            }
-                        })
-                    }
-                }
-            }
-        });
-        $('.edit-input-country').on('select2:select', function(){
-            $(".input-city").empty();
-            $(".input-city").select2({
-                tags: true,
-                ajax:{
-                    url: "{{route('locations.cities')}}",
-                    dataType: "json",
-                    data: function(params){
-                        var query = {
-                            search:  params.term,
-                            country: $( ".edit-input-country").val()
-                        }
-                        
-                        return query;
-                    },
-                    type: "GET",
-                    processResults: function (data) {
-                        return{
-                            results: $.map(data.cities, function(item){
-                                return {
-                                    id: item.id,
-                                    text: item.name
-                                }
-                            })
-                        }
-                    }
-                }
-            });
-        });
-
-        $(".edit-input-city").select2({
-            tags: true,
-            ajax:{
-                url: "{{route('locations.cities')}}",
-                dataType: "json",
-                data: function(params){
-                    var query = {
-                        search:  params.term,
-                        country: $( ".edit-input-country").val()
-                    }
-                    
-                    return query;
-                },
-                type: "GET",
-                processResults: function (data) {
-                    return{
-                        results: $.map(data.cities, function(item){
-                            return {
-                                id: item.id,
+                                id: item.name,
                                 text: item.name
                             }
                         })
@@ -428,56 +354,55 @@
         });
 
         $('#form-add-vendor').on('submit', function(e){
-            e.preventDefault();
+                e.preventDefault();
 
-            $.ajax({
-                url: $(this).attr('action'),
-                type: 'POST',
-                data: $(this).serialize(),
-                success: function(resp){
-                    if(resp.success){
-                        $('#modal-add').modal('hide');
-                        swal(resp.msg, {
-                            icon: 'success'
-                        }).then(()=>{
-                            location.reload();
+                $.ajax({
+                    url: $(this).attr('action'),
+                    type: 'POST',
+                    data: $(this).serialize(),
+                    success: function(resp){
+                        if(resp.success){
+                            $('#modal-add').modal('hide');
+                            swal(resp.msg, {
+                                icon: 'success'
+                            }).then(()=>{
+                                location.reload();
+                            });
+                        }else{
+                            swal(resp.msg, {
+                                icon: 'error'
+                            });
+                        }
+                    },
+                    error: function(resp){
+                        let form = $('#form-add-vendor');
+                        let errorFields = [];
+                        $.each(resp.responseJSON.errors, function(name, error){
+                            errorFields.push(name);
+                            form.find('#input-'+name).siblings('.invalid-feedback').remove();
+                            form.find('#input-'+name).siblings('.valid-feedback').remove();
+                            form.find('#input-'+name).siblings('.invalid-feedback.valid-feedback').remove();
+                            form.find('#input-'+name).addClass('is-invalid');
+                            form.find('#input-'+name).after(`
+                                <div class="invalid-feedback">
+                                ${error}
+                                </div>
+                            `);
                         });
-                    }else{
-                        swal(resp.msg, {
-                            icon: 'error'
+
+                        $.each(form.find('input'), function(i, field){
+                            if($.inArray($(field).attr('name'), errorFields) == -1){
+                                if($(field).attr('name') != '_token'){
+                                    $(field).addClass('is-valid');
+                                    $(field).siblings('.invalid-feedback').remove();
+                                    $(field).siblings('.valid-feedback').remove();
+                                    $(field).after('<div class="valid-feedback">Looks good!</div>'); 
+                                } 
+                            }
                         });
                     }
-                },
-                error: function(resp){
-                    let form = $('#form-add-vendor');
-                    let errorFields = [];
-                    $.each(resp.responseJSON.errors, function(name, error){
-                        errorFields.push(name);
-                        form.find('#input-'+name).siblings('.invalid-feedback').remove();
-                        form.find('#input-'+name).siblings('.valid-feedback').remove();
-                        form.find('#input-'+name).siblings('.invalid-feedback.valid-feedback').remove();
-                        form.find('#input-'+name).addClass('is-invalid');
-                        form.find('#input-'+name).after(`
-                            <div class="invalid-feedback">
-                            ${error}
-                            </div>
-                        `);
-                    });
-
-                    $.each(form.find('input'), function(i, field){
-                        if($.inArray($(field).attr('name'), errorFields) == -1){
-                            if($(field).attr('name') != '_token'){
-                                $(field).addClass('is-valid');
-                                $(field).siblings('.invalid-feedback').remove();
-                                $(field).siblings('.valid-feedback').remove();
-                                $(field).after('<div class="valid-feedback">Looks good!</div>'); 
-                            } 
-                        }
-                    });
-                }
+                });
             });
-        });
-
         $('#form-add-vendor').on('change, keypress', 'input', function(){
             $(this).removeClass("is-invalid is-valid");
             $(this).siblings('.invalid-feedback').remove();
@@ -500,9 +425,94 @@
             form.find('input[name=id]').val(vendor.id);
             form.find('input[name=email]').val(vendor.email);
             form.find('input[name=shop_name]').val(vendor.vendor_name);
-            form.find('input[name=country]').val(vendor.country);
-            form.find('input[name=city]').val(vendor.city);
+            
+            form.find('input[name=city]').val(vendor.city).trigger("change");
             form.find('input[name=vat]').val(vendor.vat);
+            form.find('input[name=vat_sec]').val(vendor.vat_sec);
+            $(".edit-input-country").select2({
+                ajax:{
+                    url: "{{route('locations.countries')}}",
+                    dataType: "json",
+                    data:{
+                        search: $( ".edit-input-country").val()
+                    },
+                    type: "GET",
+                    processResults: function (data) {
+                        return{
+                            results: $.map(data.countries, function(item){
+                                return {
+                                    id: item.name,
+                                    text: item.name
+                                }
+                            })
+                        }
+                    }
+                }
+            });
+
+            $('.edit-input-country').append(`<option value="${vendor.country}">${vendor.country}</option>`);
+            $('.edit-input-country').val(vendor.country).trigger('change');
+
+            $('.edit-input-country').on('select2:select', function(){
+                $(".edit-input-city").empty();
+                $(".edit-input-city").select2({
+                    tags: true,
+                    ajax:{
+                        url: "{{route('locations.cities')}}",
+                        dataType: "json",
+                        data: function(params){
+                            var query = {
+                                search:  params.term,
+                                country: $( ".edit-input-country").val()
+                            }
+                            
+                            return query;
+                        },
+                        type: "GET",
+                        processResults: function (data) {
+                            return{
+                                results: $.map(data.cities, function(item){
+                                    return {
+                                        id: item.name,
+                                        text: item.name
+                                    }
+                                })
+                            }
+                        }
+                    }
+                });
+            });
+
+            $(".edit-input-city").select2({
+                tags: true,
+                ajax:{
+                    url: "{{route('locations.cities')}}",
+                    dataType: "json",
+                    data: function(params){
+                        var query = {
+                            search:  params.term,
+                            country: $( ".edit-input-country").val()
+                        }
+                        
+                        return query;
+                    },
+                    type: "GET",
+                    processResults: function (data) {
+                        return{
+                            results: $.map(data.cities, function(item){
+                                return {
+                                    id: item.name,
+                                    text: item.name
+                                }
+                            })
+                        }
+                    }
+                }
+            });
+
+            $('.edit-input-city').append(`<option value="${vendor.city}">${vendor.city}</option>`);
+            $('.edit-input-city').val(vendor.city).trigger('change');
+
 
             if(vendor.vendor_details){
                 form.find('input[name=firstname]').val(vendor.vendor_details.firstname);

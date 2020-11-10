@@ -52,6 +52,7 @@ class VendorsController extends Controller
         $vendor->email = $validated['email'];
         $vendor->password = Hash::make($validated['password']);
         $vendor->vat = $validated['vat'];
+        $vendor->vat_sec = $validated['vat_sec'];
         $vendor->city = $validated['city'];
         $vendor->country = $validated['country'];
         $vendor->save();
@@ -113,7 +114,7 @@ class VendorsController extends Controller
         $vendor->country = $request->country;
         $vendor->city = $request->city;
         $vendor->vat = $validated['vat'];
-        
+        $vendor->vat_sec = $validated['vat_sec'];
         if($request->password)
         $vendor->password = Hash::make($request->password);
         $vendor->save();

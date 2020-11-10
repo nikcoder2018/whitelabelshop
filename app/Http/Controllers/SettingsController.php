@@ -43,9 +43,19 @@ class SettingsController extends Controller
     public function banner(Request $request){
         if($request->method() == 'GET'){
             $data['home_hero'] = Setting::where('name', 'home_hero')->first()->value;
+            $data['dashboard_banner'] = Setting::where('name', 'dashboard_banner')->first()->value;
             return view('admin.contents.settings-banner', $data);
         }else{
-            $banner = Setting::where('name', 'home_hero')->first();
+            $banner = '';
+            switch($request->type){
+                case 'dashboard': 
+                    $banner = Setting::where('name', 'dashboard_banner')->first();
+                break;
+                case 'home': 
+                    $banner = Setting::where('name', 'home_hero')->first();
+                break;
+            }
+            
             if($request->hasFile('image')){
                 if($request->file('image')->isValid()){
                     // Get image file

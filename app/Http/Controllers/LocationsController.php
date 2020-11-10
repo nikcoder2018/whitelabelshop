@@ -269,7 +269,8 @@ class LocationsController extends Controller
         return response()->json($data);
     }
     public function cities(Request $request){
-        $data['cities'] = City::where('country', $request->country)->where('name','like','%'.$request->search.'%')->get();
+        $country = Country::where('name', $request->country)->first();
+        $data['cities'] = City::where('country', $country->id)->where('name','like','%'.$request->search.'%')->get();
 
         return response()->json($data);
     }
