@@ -44,30 +44,38 @@
     <div class="col-md-8">
         <div class="card" id="card-add-category">
             <div class="card-header">
-                Change Dashboard Banner Image
+                Change Dashboard Banner
             </div>
             <div class="card-body">
                 <form action="{{route('settings.banner')}}" class="form-save-script" method="POST">
                     @csrf 
                     <input type="hidden" name="type" value="dashboard">
                     <div class="fileupload fileupload-new" data-provides="fileupload">
-                            <div class="fileupload-new thumbnail" style="width: 700px; height: 250px;">
-                                @if($dashboard_banner != '')
-                                    <img src="{{asset($dashboard_banner)}}" alt="" />
-                                @else 
-                                    <img src="http://www.placehold.it/700x250/EFEFEF/AAAAAA&amp;text=no+image" alt="" />
-                                @endif
-                            </div>
-                            <div class="fileupload-preview fileupload-exists thumbnail" style="max-width: 700px; max-height: 250px; line-height: 20px;"></div>
-                            <div>
-                            <span class="btn btn-sm btn-white btn-file">
-                                <span class="fileupload-new"><i class="fa fa-paper-clip"></i> Select image</span>
-                                <span class="fileupload-exists"><i class="fa fa-undo"></i> Change</span>
-                                <input type="file" name="image" class="default" />
-                            </span>
-                            <span class="btn btn-sm btn-danger fileupload-exists" data-dismiss="fileupload"><i class="fa fa-trash"></i> Remove</span>
-                            </div>
+                        <div class="fileupload-new thumbnail" style="width: 700px; height: 250px;">
+                            @if($dashboard_banner_image != '')
+                                <img src="{{asset($dashboard_banner_image)}}" alt="" />
+                            @else 
+                                <img src="http://www.placehold.it/700x250/EFEFEF/AAAAAA&amp;text=no+image" alt="" />
+                            @endif
                         </div>
+                        <div class="fileupload-preview fileupload-exists thumbnail" style="max-width: 700px; max-height: 250px; line-height: 20px;"></div>
+                        <div>
+                        <span class="btn btn-sm btn-white btn-file">
+                            <span class="fileupload-new"><i class="fa fa-paper-clip"></i> Select image</span>
+                            <span class="fileupload-exists"><i class="fa fa-undo"></i> Change</span>
+                            <input type="file" name="image" class="default" />
+                        </span>
+                        <span class="btn btn-sm btn-danger fileupload-exists" data-dismiss="fileupload"><i class="fa fa-trash"></i> Remove</span>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="">Title</label>
+                        <input type="text" name="title" class="form-control" value="{{$dashboard_banner_title}}">
+                    </div>
+                    <div class="form-group">
+                        <label for="">Sub Title</label>
+                        <input type="text" name="subtitle" class="form-control" value="{{$dashboard_banner_subtitle}}">
+                    </div>
                     <button type="submit" class="btn btn-primary pull-right">Save</button>
                 </form>
             </div>
