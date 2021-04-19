@@ -14,7 +14,7 @@
     <!-- Bootstrap core CSS -->
     <link href="{{asset('css/bootstrap.min.css')}}" rel="stylesheet">
     <link href="{{asset('css/bootstrap-reset.css')}}" rel="stylesheet">
-    <link href="{{asset('assets/font-awesome/css/font-awesome.cs')}}s" rel="stylesheet" />
+    <link href="{{asset('assets/font-awesome/css/font-awesome.css')}}" rel="stylesheet" />
 
     @yield('external_css')
 

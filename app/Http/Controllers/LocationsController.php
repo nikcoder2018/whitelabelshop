@@ -6,10 +6,8 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 use Illuminate\Http\UploadedFile;
 
-use App\LocationRegion as Region;
-use App\LocationCountry as Country;
-use App\LocationCity as City;
-
+use App\Http\Requests\StoreLocationRequest;
+use App\Location;
 class LocationsController extends Controller
 {
     /**
@@ -19,8 +17,7 @@ class LocationsController extends Controller
      */
     public function index()
     {
-        $data['regions'] = Region::with('countries')->get();
-        $data['countries'] = Country::all();
+        $data['locations'] = Location::all();
         #return response()->json($data);
         return view('admin.contents.locations', $data);
     }
@@ -41,29 +38,18 @@ class LocationsController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
+    public function store(StoreLocationRequest $request)
     {
-        switch($request->type){
-            case 'region': 
-                Region::create([
-                    'name' => $request->name
-                ]);
-            break;
-            case 'country': 
-                Country::create([
-                    'region' => $request->region_id,
-                    'name' => $request->name
-                ]);
-            break;
-            case 'city': 
-                City::create([
-                    'country' => $request->country_id,
-                    'name' => $request->name
-                ]);
-            break;
-        }
+        $validated = $request->validated();
 
-        return response()->json(array('success' => true, 'msg' => 'New location created!'));
+        $location = Location::create([
+            'region' => $validated['region'],
+            'country' => $request->country,
+            'city' => $request->city
+        ]);
+
+        if($location)
+            return response()->json(array('success' => true, 'msg' => 'New location created!'));
     }
     public function import(Request $request){
         $file = $request->file('file');
@@ -231,36 +217,15 @@ class LocationsController extends Controller
      */
     public function destroy(Request $request)
     {
-        switch($request->type){
-            case 'region': 
-                $region = Region::find($request->id);
-                $region->delete();
-            break;
-            case 'country': 
-                $country = Country::find($request->id);
-                $country->delete();
-            break;
-            case 'city': 
-                $city = City::find($request->id);
-                $city->delete();
-            break;
-        }
+        $delete = Location::find($request->id)->delete();
         
-        return response()->json(array('success' => true, 'msg' => 'Location has been deleted!'));
+        if($delete)
+            return response()->json(array('success' => true, 'msg' => 'Location has been deleted!'));
     }
 
     public function getLocationDataJSON(Request $request){
-        switch($request->type){
-            case 'region': 
-                return response()->json(Region::where('id',$request->id)->first());
-            break;
-            case 'country': 
-                return response()->json(Country::where('id',$request->id)->first());
-            break;
-            case 'city': 
-                return response()->json(City::where('id',$request->id)->first());
-            break;
-        }
+        $location = Location::find($request->id);
+        return response()->json($location);
     }
 
     public function countries(Request $request){
